@@ -1,0 +1,30 @@
+[env]
+CONVEX_DISABLE_TELEMETRY = "1"
+TURBO_TELEMETRY_DISABLED = "1"
+DO_NOT_TRACK = "1"
+
+[tools]
+node = "latest"
+bun = "latest"
+"npm:turbo" = "latest"
+
+# [hooks]
+# postinstall = '''
+#   bun pm pkg set packageManager=bun@$(bun --version) && test -d node_modules || bun install
+#   bunx playwright install chromium
+# '''
+
+# [tasks.docker]
+# description = "Build and start the Docker container"
+# dir = "."
+# run = "docker compose --env-file .env.local -f docker/compose.dev.yaml up -d --build"
+
+[settings]
+experimental = true
+
+[settings.npm]
+package_manager = "bun"
+
+[shell_alias]
+npm = "bun"
+npx = "bunx"

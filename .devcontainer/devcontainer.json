@@ -7,5 +7,30 @@
 	"forwardPorts": [
 		5432,
 		3000
-	]
+	],
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"hverlin.mise-vscode",
+				"TypeScriptTeam.native-preview",
+				"oxc.oxc-vscode",
+				"vitest.explorer",
+				"Anthropic.claude-code",
+				"bradlc.vscode-tailwindcss",
+				"stivo.tailwind-fold",
+				"bierner.markdown-mermaid",
+				"yzhang.markdown-all-in-one",
+				"tamasfe.even-better-toml",
+				"openai.chatgpt",
+				"sst-dev.opencode",
+				"docker.docker"
+			]
+		}
+	},
+	"features": {
+		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+			"moby": false
+		}
+	},
+	"onCreateCommand": "mise trust && mise install"
 }
