@@ -3,7 +3,7 @@ import { electricCollectionOptions } from '@tanstack/electric-db-collection'
 import { createCollection } from '@tanstack/react-db'
 
 import { simpleListItemSchema } from '#/db/schemas/simple-list-items'
-import { createSimpleListItem } from '#/lib/electric-demo-fns'
+import { createSimpleListItem } from '#/funcs/electric-demo/simple-list-items'
 
 export const simpleListCollection = createCollection(
   electricCollectionOptions({

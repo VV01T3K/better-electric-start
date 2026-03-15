@@ -3,7 +3,7 @@ import { electricCollectionOptions } from '@tanstack/electric-db-collection'
 import { createCollection } from '@tanstack/react-db'
 
 import { todoSchema } from '#/db/schemas/todos'
-import { createTodo, deleteTodo, updateTodo } from '#/lib/electric-demo-fns'
+import { createTodo, deleteTodo, updateTodo } from '#/funcs/electric-demo/todos'
 
 export const todoCollection = createCollection(
   electricCollectionOptions({

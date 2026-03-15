@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-import { createElectricProxyHandler } from '#/lib/electric-proxy'
+import { createElectricProxyHandler } from '#/integrations/electric/proxy'
 
 const handleElectricProxyRequest = createElectricProxyHandler({
   electricUrl: process.env.ELECTRIC_URL ?? 'http://localhost:4000',

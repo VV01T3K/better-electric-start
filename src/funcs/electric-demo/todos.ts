@@ -1,12 +1,10 @@
 import { createServerFn } from '@tanstack/react-start'
-import { eq, sql } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 
 import { db } from '#/db'
-import {
-  simpleListItemSchema,
-  simpleListItems,
-} from '#/db/schemas/simple-list-items'
 import { todoSchema, todos } from '#/db/schemas/todos'
+
+import { readTxId } from '../../integrations/electric/read-tx-id'
 
 const updateTodoInputSchema = todoSchema
   .pick({
@@ -26,23 +24,6 @@ const updateTodoInputSchema = todoSchema
   )
 
 const deleteTodoInputSchema = todoSchema.pick({ id: true })
-
-async function readTxId(tx: Parameters<typeof db.transaction>[0] extends (
-  arg: infer T,
-) => Promise<unknown>
-  ? T
-  : never) {
-  const result = await tx.execute<{ txid: string }>(
-    sql`SELECT pg_current_xact_id()::xid::text AS txid`,
-  )
-  const txid = Number(result.rows[0]?.txid)
-
-  if (!Number.isInteger(txid)) {
-    throw new Error('Failed to read transaction id from Postgres.')
-  }
-
-  return txid
-}
 
 export const createTodo = createServerFn({ method: 'POST' })
   .inputValidator(
@@ -91,26 +72,6 @@ export const deleteTodo = createServerFn({ method: 'POST' })
   .handler(async ({ data }) => {
     return db.transaction(async (tx) => {
       await tx.delete(todos).where(eq(todos.id, data.id))
-
-      return { txid: await readTxId(tx) }
-    })
-  })
-
-export const createSimpleListItem = createServerFn({ method: 'POST' })
-  .inputValidator(
-    simpleListItemSchema.pick({
-      id: true,
-      label: true,
-      createdAt: true,
-    }),
-  )
-  .handler(async ({ data }) => {
-    return db.transaction(async (tx) => {
-      await tx.insert(simpleListItems).values({
-        id: data.id,
-        label: data.label,
-        createdAt: data.createdAt,
-      })
 
       return { txid: await readTxId(tx) }
     })
