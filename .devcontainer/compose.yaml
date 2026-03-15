@@ -14,7 +14,7 @@ services:
         condition: service_started
 
   db:
-    image: postgres:16
+    image: postgres:18-alpine
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
@@ -42,6 +42,23 @@ services:
     depends_on:
       db:
         condition: service_healthy
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - 3001:3001
+    command:
+      - /bin/sh
+      - -ec
+      - |
+        cat >/etc/caddy/Caddyfile <<'EOF'
+        :3001 {
+                reverse_proxy dev-app:3000
+                encode gzip
+        }
+        EOF
+        exec caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
 
 volumes:
   postgres-data:
