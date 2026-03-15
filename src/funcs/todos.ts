@@ -4,7 +4,7 @@ import { eq } from 'drizzle-orm'
 import { db } from '#/db'
 import { todoSchema, todos } from '#/db/schemas/todos'
 
-import { readTxId } from '../../integrations/electric/read-tx-id'
+import { readTxId } from '#/integrations/electric/read-tx-id'
 
 const updateTodoInputSchema = todoSchema
   .pick({

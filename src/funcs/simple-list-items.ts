@@ -6,7 +6,7 @@ import {
   simpleListItems,
 } from '#/db/schemas/simple-list-items'
 
-import { readTxId } from '../../integrations/electric/read-tx-id'
+import { readTxId } from '#/integrations/electric/read-tx-id'
 
 export const createSimpleListItem = createServerFn({ method: 'POST' })
   .inputValidator(
