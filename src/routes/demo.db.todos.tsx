@@ -3,7 +3,7 @@ import type { FormEvent } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useLiveQuery } from '@tanstack/react-db'
 
-import { todoCollection } from '#/db/collections'
+import { todoCollection } from '#/db/collections/todos'
 
 export const Route = createFileRoute('/demo/db/todos')({
   ssr: false,

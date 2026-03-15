@@ -10,19 +10,14 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ApiElectricRouteImport } from './routes/api.electric'
 import { Route as DemoFormAddressRouteImport } from './routes/demo/form.address'
 import { Route as DemoDbTodosRouteImport } from './routes/demo.db.todos'
 import { Route as DemoDbSimpleListRouteImport } from './routes/demo.db.simple-list'
+import { Route as ApiElectricShapeRouteImport } from './routes/api.electric.$shape'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiElectricRoute = ApiElectricRouteImport.update({
-  id: '/api/electric',
-  path: '/api/electric',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoFormAddressRoute = DemoFormAddressRouteImport.update({
@@ -40,17 +35,22 @@ const DemoDbSimpleListRoute = DemoDbSimpleListRouteImport.update({
   path: '/demo/db/simple-list',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiElectricShapeRoute = ApiElectricShapeRouteImport.update({
+  id: '/api/electric/$shape',
+  path: '/api/electric/$shape',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/api/electric': typeof ApiElectricRoute
+  '/api/electric/$shape': typeof ApiElectricShapeRoute
   '/demo/db/simple-list': typeof DemoDbSimpleListRoute
   '/demo/db/todos': typeof DemoDbTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/api/electric': typeof ApiElectricRoute
+  '/api/electric/$shape': typeof ApiElectricShapeRoute
   '/demo/db/simple-list': typeof DemoDbSimpleListRoute
   '/demo/db/todos': typeof DemoDbTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
@@ -58,7 +58,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/api/electric': typeof ApiElectricRoute
+  '/api/electric/$shape': typeof ApiElectricShapeRoute
   '/demo/db/simple-list': typeof DemoDbSimpleListRoute
   '/demo/db/todos': typeof DemoDbTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
@@ -67,21 +67,21 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/api/electric'
+    | '/api/electric/$shape'
     | '/demo/db/simple-list'
     | '/demo/db/todos'
     | '/demo/form/address'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/api/electric'
+    | '/api/electric/$shape'
     | '/demo/db/simple-list'
     | '/demo/db/todos'
     | '/demo/form/address'
   id:
     | '__root__'
     | '/'
-    | '/api/electric'
+    | '/api/electric/$shape'
     | '/demo/db/simple-list'
     | '/demo/db/todos'
     | '/demo/form/address'
@@ -89,7 +89,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ApiElectricRoute: typeof ApiElectricRoute
+  ApiElectricShapeRoute: typeof ApiElectricShapeRoute
   DemoDbSimpleListRoute: typeof DemoDbSimpleListRoute
   DemoDbTodosRoute: typeof DemoDbTodosRoute
   DemoFormAddressRoute: typeof DemoFormAddressRoute
@@ -102,13 +102,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/electric': {
-      id: '/api/electric'
-      path: '/api/electric'
-      fullPath: '/api/electric'
-      preLoaderRoute: typeof ApiElectricRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo/form/address': {
@@ -132,12 +125,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoDbSimpleListRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/electric/$shape': {
+      id: '/api/electric/$shape'
+      path: '/api/electric/$shape'
+      fullPath: '/api/electric/$shape'
+      preLoaderRoute: typeof ApiElectricShapeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ApiElectricRoute: ApiElectricRoute,
+  ApiElectricShapeRoute: ApiElectricShapeRoute,
   DemoDbSimpleListRoute: DemoDbSimpleListRoute,
   DemoDbTodosRoute: DemoDbTodosRoute,
   DemoFormAddressRoute: DemoFormAddressRoute,

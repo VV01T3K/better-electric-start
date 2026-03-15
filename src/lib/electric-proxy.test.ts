@@ -1,27 +1,16 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import {
-  buildElectricShapeUrl,
-  createElectricProxyHandler,
-  isElectricTable,
-} from '#/lib/electric-proxy'
+import { buildElectricShapeUrl, createElectricProxyHandler } from '#/lib/electric-proxy'
 
 describe('electric proxy helpers', () => {
-  it('recognizes allowed tables', () => {
-    expect(isElectricTable('todos')).toBe(true)
-    expect(isElectricTable('simple_list_items')).toBe(true)
-    expect(isElectricTable('users')).toBe(false)
-    expect(isElectricTable(null)).toBe(false)
-  })
-
-  it('builds an upstream Electric shape URL from forwarded params', () => {
+  it('builds an upstream Electric shape URL from the request path plus forwarded protocol params', () => {
     const request = new Request(
-      'http://localhost:3000/api/electric?table=todos&handle=abc123&offset=now&live=true&ignored=value',
+      'http://localhost:3000/api/electric/todos?handle=abc123&offset=now&live=true&ignored=value',
     )
 
     const upstreamUrl = buildElectricShapeUrl(request, {
       electricUrl: 'http://localhost:4000',
-      table: 'todos',
+      shape: 'todos',
       sourceId: 'src_123',
       secret: 'secret_456',
     })
@@ -31,7 +20,7 @@ describe('electric proxy helpers', () => {
     )
   })
 
-  it('returns 400 for a disallowed table before calling upstream', async () => {
+  it('returns 400 when the shape path is missing', async () => {
     const fetchImpl = vi.fn<typeof fetch>()
     const handler = createElectricProxyHandler({
       electricUrl: 'http://localhost:4000',
@@ -39,7 +28,8 @@ describe('electric proxy helpers', () => {
     })
 
     const response = await handler(
-      new Request('http://localhost:3000/api/electric?table=users'),
+      new Request('http://localhost:3000/api/electric'),
+      undefined,
     )
 
     expect(response.status).toBe(400)
@@ -62,9 +52,8 @@ describe('electric proxy helpers', () => {
     })
 
     const response = await handler(
-      new Request(
-        'http://localhost:3000/api/electric?table=simple_list_items&offset=now',
-      ),
+      new Request('http://localhost:3000/api/electric/simple-list-items?offset=now'),
+      'simple-list-items',
     )
 
     expect(fetchImpl).toHaveBeenCalledTimes(1)

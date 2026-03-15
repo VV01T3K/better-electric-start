@@ -8,10 +8,11 @@ const handleElectricProxyRequest = createElectricProxyHandler({
   secret: process.env.ELECTRIC_SECRET,
 })
 
-export const Route = createFileRoute('/api/electric')({
+export const Route = createFileRoute('/api/electric/$shape')({
   server: {
     handlers: {
-      GET: ({ request }) => handleElectricProxyRequest(request),
+      GET: ({ request, params }) =>
+        handleElectricProxyRequest(request, params.shape),
     },
   },
 })
