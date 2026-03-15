@@ -2,16 +2,19 @@ import { createServerFn } from '@tanstack/react-start'
 import { eq, sql } from 'drizzle-orm'
 
 import { db } from '#/db'
-import { simpleListItemRowSchema, todoRowSchema } from '#/db/entities'
-import { simpleListItems, todos } from '#/db/schema'
+import {
+  simpleListItemSchema,
+  simpleListItems,
+} from '#/db/schemas/simple-list-items'
+import { todoSchema, todos } from '#/db/schemas/todos'
 
-const updateTodoInputSchema = todoRowSchema
+const updateTodoInputSchema = todoSchema
   .pick({
     id: true,
   })
   .extend({
-    text: todoRowSchema.shape.text.optional(),
-    completed: todoRowSchema.shape.completed.optional(),
+    text: todoSchema.shape.text.optional(),
+    completed: todoSchema.shape.completed.optional(),
   })
   .refine(
     (value) =>
@@ -22,7 +25,7 @@ const updateTodoInputSchema = todoRowSchema
     },
   )
 
-const deleteTodoInputSchema = todoRowSchema.pick({ id: true })
+const deleteTodoInputSchema = todoSchema.pick({ id: true })
 
 async function readTxId(tx: Parameters<typeof db.transaction>[0] extends (
   arg: infer T,
@@ -43,11 +46,11 @@ async function readTxId(tx: Parameters<typeof db.transaction>[0] extends (
 
 export const createTodo = createServerFn({ method: 'POST' })
   .inputValidator(
-    todoRowSchema.pick({
+    todoSchema.pick({
       id: true,
       text: true,
       completed: true,
-      created_at: true,
+      createdAt: true,
     }),
   )
   .handler(async ({ data }) => {
@@ -56,7 +59,7 @@ export const createTodo = createServerFn({ method: 'POST' })
         id: data.id,
         text: data.text,
         completed: data.completed,
-        createdAt: data.created_at,
+        createdAt: data.createdAt,
       })
 
       return { txid: await readTxId(tx) }
@@ -95,10 +98,10 @@ export const deleteTodo = createServerFn({ method: 'POST' })
 
 export const createSimpleListItem = createServerFn({ method: 'POST' })
   .inputValidator(
-    simpleListItemRowSchema.pick({
+    simpleListItemSchema.pick({
       id: true,
       label: true,
-      created_at: true,
+      createdAt: true,
     }),
   )
   .handler(async ({ data }) => {
@@ -106,7 +109,7 @@ export const createSimpleListItem = createServerFn({ method: 'POST' })
       await tx.insert(simpleListItems).values({
         id: data.id,
         label: data.label,
-        createdAt: data.created_at,
+        createdAt: data.createdAt,
       })
 
       return { txid: await readTxId(tx) }

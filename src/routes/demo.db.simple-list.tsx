@@ -20,7 +20,7 @@ function SimpleListDemoPage() {
     (query) =>
       query
         .from({ item: simpleListCollection })
-        .orderBy(({ item }) => item.created_at, 'desc'),
+        .orderBy(({ item }) => item.createdAt, 'desc'),
     [],
   )
   const listItems = items ?? []
@@ -36,7 +36,7 @@ function SimpleListDemoPage() {
     simpleListCollection.insert({
       id: crypto.randomUUID(),
       label,
-      created_at: new Date(),
+      createdAt: new Date(),
     })
 
     setDraft('')
@@ -98,7 +98,7 @@ function SimpleListDemoPage() {
                     </p>
                     <p className="mt-1 text-xs text-[var(--sea-ink-soft)]">
                       Item #{listItems.length - index} ·{' '}
-                      {item.created_at.toLocaleString()}
+                      {item.createdAt.toLocaleString()}
                     </p>
                   </div>
                 </div>

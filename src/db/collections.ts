@@ -1,7 +1,9 @@
+import { snakeCamelMapper } from '@electric-sql/client'
 import { electricCollectionOptions } from '@tanstack/electric-db-collection'
 import { createCollection } from '@tanstack/react-db'
 
-import { simpleListItemRowSchema, todoRowSchema } from '#/db/entities'
+import { simpleListItemSchema } from '#/db/schemas/simple-list-items'
+import { todoSchema } from '#/db/schemas/todos'
 import {
   createSimpleListItem,
   createTodo,
@@ -25,13 +27,14 @@ const shapeParser = {
 export const todoCollection = createCollection(
   electricCollectionOptions({
     id: 'todos',
-    schema: todoRowSchema,
+    schema: todoSchema,
     getKey: (row) => row.id,
     shapeOptions: {
       url: getElectricShapeUrl(),
       params: {
         table: 'todos',
       },
+      columnMapper: snakeCamelMapper(),
       parser: shapeParser,
     },
     onInsert: async ({ transaction }) => {
@@ -62,13 +65,14 @@ export const todoCollection = createCollection(
 export const simpleListCollection = createCollection(
   electricCollectionOptions({
     id: 'simple-list-items',
-    schema: simpleListItemRowSchema,
+    schema: simpleListItemSchema,
     getKey: (row) => row.id,
     shapeOptions: {
       url: getElectricShapeUrl(),
       params: {
         table: 'simple_list_items',
       },
+      columnMapper: snakeCamelMapper(),
       parser: shapeParser,
     },
     onInsert: async ({ transaction }) => {

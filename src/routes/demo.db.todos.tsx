@@ -20,7 +20,7 @@ function TodoDemoPage() {
     (query) =>
       query
         .from({ todo: todoCollection })
-        .orderBy(({ todo }) => todo.created_at, 'desc'),
+        .orderBy(({ todo }) => todo.createdAt, 'desc'),
     [],
   )
   const todoItems = todos ?? []
@@ -40,7 +40,7 @@ function TodoDemoPage() {
       id: crypto.randomUUID(),
       text,
       completed: false,
-      created_at: new Date(),
+      createdAt: new Date(),
     })
 
     setDraft('')
@@ -118,7 +118,7 @@ function TodoDemoPage() {
                       {todo.text}
                     </p>
                     <p className="mt-1 text-xs text-[var(--sea-ink-soft)]">
-                      Created {todo.created_at.toLocaleString()}
+                      Created {todo.createdAt.toLocaleString()}
                     </p>
                   </div>
                   <button
