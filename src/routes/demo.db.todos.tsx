@@ -7,9 +7,8 @@ import { todoCollection } from '#/db/collections/todos'
 
 export const Route = createFileRoute('/demo/db/todos')({
   ssr: false,
-  loader: async () => {
-    await todoCollection.preload()
-    return null
+  loader: () => {
+    todoCollection.preload()
   },
   component: TodoDemoPage,
 })

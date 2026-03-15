@@ -7,9 +7,8 @@ import { simpleListCollection } from '#/db/collections/simple-list-items'
 
 export const Route = createFileRoute('/demo/db/simple-list')({
   ssr: false,
-  loader: async () => {
-    await simpleListCollection.preload()
-    return null
+  loader: () => {
+    simpleListCollection.preload()
   },
   component: SimpleListDemoPage,
 })

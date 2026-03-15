@@ -11,7 +11,7 @@ export const simpleListCollection = createCollection(
     schema: simpleListItemSchema,
     getKey: (row) => row.id,
     shapeOptions: {
-      url: '/api/electric/simple-list-items',
+      url: typeof window !== 'undefined' ? `${window.location.origin}/api/electric/simple-list-items` : '/api/electric/simple-list-items',
       columnMapper: snakeCamelMapper(),
       parser: {
         timestamptz: (value: string) => new Date(value),

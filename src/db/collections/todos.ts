@@ -11,7 +11,7 @@ export const todoCollection = createCollection(
     schema: todoSchema,
     getKey: (row) => row.id,
     shapeOptions: {
-      url: '/api/electric/todos',
+      url: typeof window !== 'undefined' ? `${window.location.origin}/api/electric/todos` : '/api/electric/todos',
       columnMapper: snakeCamelMapper(),
       parser: {
         timestamptz: (value: string) => new Date(value),
