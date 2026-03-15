@@ -11,7 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiElectricRouteImport } from './routes/api.electric'
 import { Route as DemoFormAddressRouteImport } from './routes/demo/form.address'
+import { Route as DemoDbTodosRouteImport } from './routes/demo.db.todos'
+import { Route as DemoDbSimpleListRouteImport } from './routes/demo.db.simple-list'
 
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
@@ -23,39 +26,85 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiElectricRoute = ApiElectricRouteImport.update({
+  id: '/api/electric',
+  path: '/api/electric',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DemoFormAddressRoute = DemoFormAddressRouteImport.update({
   id: '/demo/form/address',
   path: '/demo/form/address',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoDbTodosRoute = DemoDbTodosRouteImport.update({
+  id: '/demo/db/todos',
+  path: '/demo/db/todos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoDbSimpleListRoute = DemoDbSimpleListRouteImport.update({
+  id: '/demo/db/simple-list',
+  path: '/demo/db/simple-list',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/api/electric': typeof ApiElectricRoute
+  '/demo/db/simple-list': typeof DemoDbSimpleListRoute
+  '/demo/db/todos': typeof DemoDbTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/api/electric': typeof ApiElectricRoute
+  '/demo/db/simple-list': typeof DemoDbSimpleListRoute
+  '/demo/db/todos': typeof DemoDbTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/api/electric': typeof ApiElectricRoute
+  '/demo/db/simple-list': typeof DemoDbSimpleListRoute
+  '/demo/db/todos': typeof DemoDbTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/demo/form/address'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/api/electric'
+    | '/demo/db/simple-list'
+    | '/demo/db/todos'
+    | '/demo/form/address'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/demo/form/address'
-  id: '__root__' | '/' | '/about' | '/demo/form/address'
+  to:
+    | '/'
+    | '/about'
+    | '/api/electric'
+    | '/demo/db/simple-list'
+    | '/demo/db/todos'
+    | '/demo/form/address'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/api/electric'
+    | '/demo/db/simple-list'
+    | '/demo/db/todos'
+    | '/demo/form/address'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  ApiElectricRoute: typeof ApiElectricRoute
+  DemoDbSimpleListRoute: typeof DemoDbSimpleListRoute
+  DemoDbTodosRoute: typeof DemoDbTodosRoute
   DemoFormAddressRoute: typeof DemoFormAddressRoute
 }
 
@@ -75,11 +124,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/electric': {
+      id: '/api/electric'
+      path: '/api/electric'
+      fullPath: '/api/electric'
+      preLoaderRoute: typeof ApiElectricRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/demo/form/address': {
       id: '/demo/form/address'
       path: '/demo/form/address'
       fullPath: '/demo/form/address'
       preLoaderRoute: typeof DemoFormAddressRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo/db/todos': {
+      id: '/demo/db/todos'
+      path: '/demo/db/todos'
+      fullPath: '/demo/db/todos'
+      preLoaderRoute: typeof DemoDbTodosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo/db/simple-list': {
+      id: '/demo/db/simple-list'
+      path: '/demo/db/simple-list'
+      fullPath: '/demo/db/simple-list'
+      preLoaderRoute: typeof DemoDbSimpleListRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -88,6 +158,9 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  ApiElectricRoute: ApiElectricRoute,
+  DemoDbSimpleListRoute: DemoDbSimpleListRoute,
+  DemoDbTodosRoute: DemoDbTodosRoute,
   DemoFormAddressRoute: DemoFormAddressRoute,
 }
 export const routeTree = rootRouteImport
