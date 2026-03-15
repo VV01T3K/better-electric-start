@@ -54,7 +54,9 @@ services:
       - |
         cat >/etc/caddy/Caddyfile <<'EOF'
         :3001 {
-                reverse_proxy dev-app:3000
+                reverse_proxy dev-app:3000 {
+                        flush_interval -1
+                }
                 encode gzip
         }
         EOF

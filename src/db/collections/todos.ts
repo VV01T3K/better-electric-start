@@ -12,6 +12,7 @@ export const todoCollection = createCollection(
     getKey: (row) => row.id,
     shapeOptions: {
       url: typeof window !== 'undefined' ? `${window.location.origin}/api/electric/todos` : '/api/electric/todos',
+      liveSse: true,
       columnMapper: snakeCamelMapper(),
       parser: {
         timestamptz: (value: string) => new Date(value),

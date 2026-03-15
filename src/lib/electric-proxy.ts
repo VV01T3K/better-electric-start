@@ -7,6 +7,27 @@ type ElectricProxyOptions = {
   fetchImpl?: typeof fetch
 }
 
+type BunRequestWithServerTimeout = Request & {
+  runtime?: {
+    bun?: {
+      server?: {
+        timeout?: (request: Request, seconds: number) => void
+      }
+    }
+  }
+}
+
+export function disableBunRequestIdleTimeout(request: Request) {
+  const server = (request as BunRequestWithServerTimeout).runtime?.bun?.server
+
+  if (typeof server?.timeout === 'function') {
+    server.timeout(request, 60)
+    return true
+  }
+
+  return false
+}
+
 export function buildElectricShapeUrl(
   request: Request,
   options: {
@@ -48,6 +69,8 @@ export function createElectricProxyHandler({
     request: Request,
     shape: string | undefined,
   ) {
+    disableBunRequestIdleTimeout(request)
+
     if (!shape) {
       return Response.json(
         { error: 'Missing shape.' },
