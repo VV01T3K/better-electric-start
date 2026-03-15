@@ -1,32 +1,21 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import type { FormEvent } from 'react'
-import { ClientOnly, createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { useLiveQuery } from '@tanstack/react-db'
 
 import { simpleListCollection } from '#/db/collections'
 
 export const Route = createFileRoute('/demo/db/simple-list')({
+  ssr: false,
+  loader: async () => {
+    await simpleListCollection.preload()
+    return null
+  },
   component: SimpleListDemoPage,
 })
 
 function SimpleListDemoPage() {
-  return (
-    <main className="page-wrap px-4 py-12">
-      <h1 className="mb-6 text-2xl font-bold text-[var(--sea-ink)]">Simple List</h1>
-      <ClientOnly fallback={<p className="text-sm text-[var(--sea-ink-soft)]">Loading...</p>}>
-        <SimpleListClient />
-      </ClientOnly>
-    </main>
-  )
-}
-
-function SimpleListClient() {
   const [draft, setDraft] = useState('')
-
-  useEffect(() => {
-    void simpleListCollection.preload()
-  }, [])
-
   const { data: items, isLoading } = useLiveQuery(
     (query) =>
       query
@@ -50,7 +39,9 @@ function SimpleListClient() {
   }
 
   return (
-    <>
+    <main className="page-wrap px-4 py-12">
+      <h1 className="mb-6 text-2xl font-bold text-[var(--sea-ink)]">Simple List</h1>
+
       <form className="mb-6 flex gap-2" onSubmit={handleSubmit}>
         <input
           value={draft}
@@ -82,6 +73,6 @@ function SimpleListClient() {
           ))
         )}
       </div>
-    </>
+    </main>
   )
 }
