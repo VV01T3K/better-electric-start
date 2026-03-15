@@ -11,38 +11,16 @@ export const Route = createFileRoute('/demo/db/simple-list')({
 
 function SimpleListDemoPage() {
   return (
-    <main className="page-wrap px-4 pb-10 pt-14">
-      <section className="island-shell rise-in rounded-[2rem] px-6 py-8 sm:px-10">
-        <p className="island-kicker mb-3">Minimal Sync Example</p>
-        <h1 className="display-title max-w-3xl text-4xl leading-tight font-bold text-[var(--sea-ink)] sm:text-5xl">
-          The smallest live list in this repo.
-        </h1>
-        <p className="mt-4 max-w-2xl text-base leading-7 text-[var(--sea-ink-soft)]">
-          This page keeps the idea intentionally narrow: one collection, one
-          input, one server write, and one live query fed by Electric.
-        </p>
-      </section>
-
-      <section className="mt-8 grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
-        <ClientOnly fallback={<SimpleListCardFallback />}>
-          <SimpleListClientCard />
-        </ClientOnly>
-
-        <aside className="island-shell rounded-[1.75rem] p-5">
-          <p className="island-kicker mb-3">What It Shows</p>
-          <p className="m-0 text-sm leading-7 text-[var(--sea-ink-soft)]">
-            The simple list keeps writes add-only so the whole stack is easier
-            to inspect: client-generated UUID, optimistic collection insert,
-            one server function, one Postgres transaction id, and one Electric
-            shape stream.
-          </p>
-        </aside>
-      </section>
+    <main className="page-wrap px-4 py-12">
+      <h1 className="mb-6 text-2xl font-bold text-[var(--sea-ink)]">Simple List</h1>
+      <ClientOnly fallback={<p className="text-sm text-[var(--sea-ink-soft)]">Loading...</p>}>
+        <SimpleListClient />
+      </ClientOnly>
     </main>
   )
 }
 
-function SimpleListClientCard() {
+function SimpleListClient() {
   const [draft, setDraft] = useState('')
 
   useEffect(() => {
@@ -60,90 +38,50 @@ function SimpleListClientCard() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-
     const label = draft.trim()
-    if (!label) {
-      return
-    }
+    if (!label) return
 
     simpleListCollection.insert({
       id: crypto.randomUUID(),
       label,
       createdAt: new Date(),
     })
-
     setDraft('')
   }
 
   return (
-    <article className="island-shell rounded-[1.75rem] p-6">
-      <form className="flex flex-col gap-3 sm:flex-row" onSubmit={handleSubmit}>
-        <label className="sr-only" htmlFor="simple-list-label">
-          List item text
-        </label>
+    <>
+      <form className="mb-6 flex gap-2" onSubmit={handleSubmit}>
         <input
-          id="simple-list-label"
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
-          placeholder="Add one synced list item"
-          className="min-w-0 flex-1 rounded-2xl border border-[var(--line)] bg-white/70 px-4 py-3 text-[var(--sea-ink)] outline-none transition focus:border-[var(--lagoon-deep)] focus:bg-white"
+          placeholder="Add an item..."
+          className="min-w-0 flex-1 rounded border border-[var(--line)] px-3 py-2 text-sm outline-none focus:border-[var(--lagoon-deep)]"
         />
         <button
           type="submit"
-          className="rounded-2xl border border-[rgba(50,143,151,0.35)] bg-[rgba(79,184,178,0.18)] px-5 py-3 text-sm font-semibold text-[var(--lagoon-deep)] transition hover:-translate-y-0.5 hover:bg-[rgba(79,184,178,0.28)]"
+          className="rounded border border-[var(--line)] px-4 py-2 text-sm font-medium text-[var(--lagoon-deep)] hover:bg-gray-50"
         >
-          Add item
+          Add
         </button>
       </form>
 
-      <div className="mt-6 space-y-3">
+      <div className="space-y-2">
         {isLoading ? (
-          <p className="m-0 text-sm text-[var(--sea-ink-soft)]">
-            Waiting for the initial Electric snapshot...
-          </p>
+          <p className="text-sm text-[var(--sea-ink-soft)]">Connecting...</p>
         ) : listItems.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-[var(--line)] bg-white/35 px-5 py-8 text-center text-sm text-[var(--sea-ink-soft)]">
-            No list items yet. Add one to see the smallest end-to-end Electric
-            sync flow in this starter.
-          </div>
+          <p className="text-sm text-[var(--sea-ink-soft)]">No items yet.</p>
         ) : (
-          listItems.map((item, index) => (
+          listItems.map((item) => (
             <div
               key={item.id}
-              className="flex items-center justify-between rounded-2xl border border-[var(--line)] bg-white/55 px-4 py-3"
+              className="rounded border border-[var(--line)] px-3 py-2 text-sm text-[var(--sea-ink)]"
             >
-              <div>
-                <p className="m-0 text-sm font-medium text-[var(--sea-ink)]">
-                  {item.label}
-                </p>
-                <p className="mt-1 text-xs text-[var(--sea-ink-soft)]">
-                  Item #{listItems.length - index} ·{' '}
-                  {item.createdAt.toLocaleString()}
-                </p>
-              </div>
+              {item.label}
             </div>
           ))
         )}
       </div>
-    </article>
-  )
-}
-
-function SimpleListCardFallback() {
-  return (
-    <article className="island-shell rounded-[1.75rem] p-6">
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <div className="min-w-0 flex-1 rounded-2xl border border-[var(--line)] bg-white/70 px-4 py-3 text-sm text-[var(--sea-ink-soft)]">
-          Syncing list on the client...
-        </div>
-        <div className="rounded-2xl border border-[rgba(50,143,151,0.2)] bg-[rgba(79,184,178,0.12)] px-5 py-3 text-sm font-semibold text-[var(--lagoon-deep)]">
-          Add item
-        </div>
-      </div>
-
-      <div className="mt-6 rounded-2xl border border-dashed border-[var(--line)] bg-white/35 px-5 py-8 text-center text-sm text-[var(--sea-ink-soft)]">
-        The live Electric collection connects after hydration.
-      </div>
-    </article>
+    </>
   )
 }
