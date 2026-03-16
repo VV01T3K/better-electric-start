@@ -2,38 +2,13 @@ import { createServerFn } from '@tanstack/react-start'
 import { eq } from 'drizzle-orm'
 
 import { db } from '#/db'
-import { todoSchema, todos } from '#/db/schemas/todos'
+import { todoServerSchema, todos } from '#/db/schemas/todos'
 
 import { readTxId } from '#/integrations/electric/read-tx-id'
 
-const updateTodoInputSchema = todoSchema
-  .pick({
-    id: true,
-  })
-  .extend({
-    text: todoSchema.shape.text.optional(),
-    completed: todoSchema.shape.completed.optional(),
-  })
-  .refine(
-    (value) =>
-      typeof value.text !== 'undefined' || typeof value.completed !== 'undefined',
-    {
-      message: 'At least one todo field must be updated.',
-      path: ['text'],
-    },
-  )
 
-const deleteTodoInputSchema = todoSchema.pick({ id: true })
-
-export const createTodo = createServerFn({ method: 'POST' })
-  .inputValidator(
-    todoSchema.pick({
-      id: true,
-      text: true,
-      completed: true,
-      createdAt: true,
-    }),
-  )
+export const insertTodo = createServerFn()
+  .inputValidator(todoServerSchema.insert)
   .handler(async ({ data }) => {
     return db.transaction(async (tx) => {
       await tx.insert(todos).values({
@@ -47,8 +22,8 @@ export const createTodo = createServerFn({ method: 'POST' })
     })
   })
 
-export const updateTodo = createServerFn({ method: 'POST' })
-  .inputValidator(updateTodoInputSchema)
+export const updateTodo = createServerFn()
+  .inputValidator(todoServerSchema.update)
   .handler(async ({ data }) => {
     return db.transaction(async (tx) => {
       const values: Partial<typeof todos.$inferInsert> = {}
@@ -67,8 +42,8 @@ export const updateTodo = createServerFn({ method: 'POST' })
     })
   })
 
-export const deleteTodo = createServerFn({ method: 'POST' })
-  .inputValidator(deleteTodoInputSchema)
+export const deleteTodo = createServerFn()
+  .inputValidator(todoServerSchema.delete)
   .handler(async ({ data }) => {
     return db.transaction(async (tx) => {
       await tx.delete(todos).where(eq(todos.id, data.id))

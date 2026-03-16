@@ -1,20 +1,19 @@
-import { simpleListItemSchema } from '#/db/schemas/simple-list-items'
-import { todoSchema } from '#/db/schemas/todos'
+import { todoServerSchema, simpleListItemServerSchema } from '#/db/schemas'
 import { createElectricCollection } from '#/integrations/electric/collection'
 
-import { createSimpleListItem } from '#/funcs/simple-list-items'
-import { createTodo, deleteTodo, updateTodo } from '#/funcs/todos'
+import { insertSimpleListItem } from '#/funcs/simple-list-items'
+import { insertTodo, deleteTodo, updateTodo } from '#/funcs/todos'
 
 export const todoCollection = createElectricCollection({
   id: 'todos',
-  schema: todoSchema,
-  onInsert: createTodo,
+  schema: todoServerSchema.row,
+  onInsert: insertTodo,
   onUpdate: updateTodo,
   onDelete: deleteTodo,
 })
 
 export const simpleListCollection = createElectricCollection({
   id: 'simple-list-items',
-  schema: simpleListItemSchema,
-  onInsert: createSimpleListItem,
+  schema: simpleListItemServerSchema.row,
+  onInsert: insertSimpleListItem,
 })

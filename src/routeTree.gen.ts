@@ -11,9 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DemoFormAddressRouteImport } from './routes/demo/form.address'
-import { Route as DemoDbTodosRouteImport } from './routes/demo.db.todos'
-import { Route as DemoDbSimpleListRouteImport } from './routes/demo.db.simple-list'
-import { Route as ApiElectricShapeRouteImport } from './routes/api.electric.$shape'
+import { Route as DemoDbTodosRouteImport } from './routes/demo/db.todos'
+import { Route as DemoDbSimpleListRouteImport } from './routes/demo/db.simple-list'
+import { Route as ApiElectricShapeRouteImport } from './routes/api/electric.$shape'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
