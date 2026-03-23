@@ -33,9 +33,7 @@ function SimpleListDemoPage() {
     },
     onSubmit: async ({ value, formApi }) => {
       const transaction = simpleListCollection.insert({
-        id: crypto.randomUUID(),
         label: value.label,
-        created_at: new Date(),
       })
 
       await transaction.isPersisted.promise

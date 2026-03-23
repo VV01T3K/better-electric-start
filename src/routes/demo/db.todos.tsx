@@ -34,10 +34,7 @@ function TodoDemoPage() {
     onSubmit: async ({ value, formApi }) => {
       const newTodo = todoSchema.add.parse(value)
       const transaction = todoCollection.insert({
-        id: crypto.randomUUID(),
         text: newTodo.text,
-        completed: false,
-        created_at: new Date(),
       })
 
       await transaction.isPersisted.promise

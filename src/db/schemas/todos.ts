@@ -1,10 +1,10 @@
 import { z } from 'zod'
 
 const todo = z.object({
-  id: z.uuid().brand<'todos'>(),
+  id: z.uuid().default(() => crypto.randomUUID()),
   text: z.string().trim().min(1, 'Todo text is required.'),
-  completed: z.boolean(),
-  created_at: z.date(),
+  completed: z.boolean().default(false),
+  created_at: z.coerce.date().default(() => new Date()),
 })
 
 export type Todo = z.input<typeof todo>
