@@ -15,7 +15,7 @@ export const insertTodo = createServerFn()
         id: data.id,
         text: data.text,
         completed: data.completed,
-        createdAt: data.createdAt,
+        created_at: data.created_at,
       })
 
       return { txid: await readTxId(tx) }

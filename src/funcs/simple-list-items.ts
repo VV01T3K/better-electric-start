@@ -13,7 +13,7 @@ export const insertSimpleListItem = createServerFn()
       await tx.insert(simpleListItems).values({
         id: data.id,
         label: data.label,
-        createdAt: data.createdAt,
+        created_at: data.created_at,
       })
 
       return { txid: await readTxId(tx) }

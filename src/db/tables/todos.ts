@@ -9,7 +9,7 @@ export const todos = pgTable('todos', {
   id: uuid().primaryKey(),
   text: text().notNull(),
   completed: boolean().notNull().default(false),
-  createdAt: timestamp('created_at', { withTimezone: true })
+  created_at: timestamp({ withTimezone: true })
     .notNull()
     .defaultNow(),
 })

@@ -18,7 +18,7 @@ function SimpleListDemoPage() {
     (query) =>
       query
         .from({ item: simpleListCollection })
-        .orderBy(({ item }) => item.createdAt, 'desc'),
+        .orderBy(({ item }) => item.created_at, 'desc'),
     [],
   )
   const listItems = items ?? []
@@ -35,7 +35,7 @@ function SimpleListDemoPage() {
       const transaction = simpleListCollection.insert({
         id: crypto.randomUUID(),
         label: value.label,
-        createdAt: new Date(),
+        created_at: new Date(),
       })
 
       await transaction.isPersisted.promise

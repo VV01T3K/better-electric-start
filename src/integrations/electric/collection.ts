@@ -1,4 +1,3 @@
-import { snakeCamelMapper } from '@electric-sql/client'
 import {
   electricCollectionOptions,
   type ElectricCollectionUtils,
@@ -81,7 +80,6 @@ export function createElectricCollection<
     shapeOptions: {
       url: getElectricShapeUrl(id, url),
       liveSse: true,
-      columnMapper: snakeCamelMapper(),
       parser: {
         timestamptz: (value: string) => new Date(value),
       } as never,

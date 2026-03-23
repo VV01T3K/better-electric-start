@@ -18,7 +18,7 @@ function TodoDemoPage() {
     (query) =>
       query
         .from({ todo: todoCollection })
-        .orderBy(({ todo }) => todo.createdAt, 'desc'),
+        .orderBy(({ todo }) => todo.created_at, 'desc'),
     [],
   )
   const todoItems = todos ?? []
@@ -37,7 +37,7 @@ function TodoDemoPage() {
         id: crypto.randomUUID(),
         text: newTodo.text,
         completed: false,
-        createdAt: new Date(),
+        created_at: new Date(),
       })
 
       await transaction.isPersisted.promise
