@@ -2,39 +2,38 @@ import { useForm } from '@tanstack/react-form'
 import { useLiveQuery } from '@tanstack/react-db'
 import { createFileRoute } from '@tanstack/react-router'
 
-import { todoCollection } from '#/db/collections'
-import { todoSchema } from '#/db/schemas'
+import { simpleListCollection } from '#/db/collections'
+import { simpleListItemClientSchema } from '#/db/schemas'
 
-export const Route = createFileRoute('/demo/db/todos')({
+export const Route = createFileRoute('/_authed/demo/db/simple-list')({
   ssr: false,
-  loader: () => {
-    todoCollection.preload()
+  loader: async () => {
+    await simpleListCollection.preload()
   },
-  component: TodoDemoPage,
+  component: SimpleListDemoPage,
 })
 
-function TodoDemoPage() {
-  const { data: todos, isLoading } = useLiveQuery(
+function SimpleListDemoPage() {
+  const { data: items, isLoading } = useLiveQuery(
     (query) =>
       query
-        .from({ todo: todoCollection })
-        .orderBy(({ todo }) => todo.created_at, 'desc'),
+        .from({ item: simpleListCollection })
+        .orderBy(({ item }) => item.created_at, 'desc'),
     [],
   )
-  const todoItems = todos ?? []
+  const listItems = items ?? []
 
   const form = useForm({
     defaultValues: {
-      text: '',
+      label: '',
     },
     validators: {
-      onChange: todoSchema.add,
-      onSubmit: todoSchema.add,
+      onChange: simpleListItemClientSchema.add,
+      onSubmit: simpleListItemClientSchema.add,
     },
     onSubmit: async ({ value, formApi }) => {
-      const newTodo = todoSchema.add.parse(value)
-      const transaction = todoCollection.insert({
-        text: newTodo.text,
+      const transaction = simpleListCollection.insert({
+        label: value.label,
       })
 
       await transaction.isPersisted.promise
@@ -46,10 +45,9 @@ function TodoDemoPage() {
     <main className="page-wrap px-4 py-12">
       <section className="mx-auto max-w-2xl">
         <header className="mb-6 space-y-2">
-          <h1 className="text-2xl font-bold text-(--sea-ink)">Synced Todos</h1>
+          <h1 className="text-2xl font-bold text-(--sea-ink)">Simple List</h1>
           <p className="text-sm text-(--sea-ink-soft)">
-            Create todos with TanStack Form, then toggle and delete them from the
-            live Electric collection.
+            Add items with TanStack Form and watch the synced list update live.
           </p>
         </header>
 
@@ -62,7 +60,7 @@ function TodoDemoPage() {
             void form.handleSubmit()
           }}
         >
-          <form.Field name="text">
+          <form.Field name="label">
             {(field) => {
               const errors = field.state.meta.errors
               const hasError = field.state.meta.isTouched && errors.length > 0
@@ -71,7 +69,7 @@ function TodoDemoPage() {
               return (
                 <div className="min-w-0 flex-1">
                   <label htmlFor={field.name} className="sr-only">
-                    Todo text
+                    List item
                   </label>
                   <input
                     id={field.name}
@@ -79,7 +77,7 @@ function TodoDemoPage() {
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChange={(event) => field.handleChange(event.target.value)}
-                    placeholder="Add a todo..."
+                    placeholder="Add an item..."
                     aria-invalid={hasError}
                     className="min-w-0 w-full rounded border border-(--line) px-3 py-2 text-sm outline-none transition focus:border-(--lagoon-deep)"
                   />
@@ -116,38 +114,15 @@ function TodoDemoPage() {
         <div className="space-y-2">
           {isLoading ? (
             <p className="text-sm text-(--sea-ink-soft)">Connecting...</p>
-          ) : todoItems.length === 0 ? (
-            <p className="text-sm text-(--sea-ink-soft)">No todos yet.</p>
+          ) : listItems.length === 0 ? (
+            <p className="text-sm text-(--sea-ink-soft)">No items yet.</p>
           ) : (
-            todoItems.map((todo) => (
+            listItems.map((item) => (
               <article
-                key={todo.id}
-                className="flex items-center gap-3 rounded border border-(--line) px-3 py-2"
+                key={item.id}
+                className="rounded border border-(--line) px-3 py-2 text-sm text-(--sea-ink)"
               >
-                <input
-                  type="checkbox"
-                  checked={todo.completed}
-                  onChange={() => {
-                    todoCollection.update(todo.id, (draft) => {
-                      draft.completed = !draft.completed
-                    })
-                  }}
-                />
-                <span
-                  className={`flex-1 text-sm ${todo.completed
-                    ? 'text-(--sea-ink-soft) line-through'
-                    : 'text-(--sea-ink)'
-                    }`}
-                >
-                  {todo.text}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => todoCollection.delete(todo.id)}
-                  className="text-xs text-(--sea-ink-soft) transition hover:text-(--sea-ink)"
-                >
-                  Delete
-                </button>
+                {item.label}
               </article>
             ))
           )}

@@ -9,12 +9,30 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignUpRouteImport } from './routes/sign-up'
+import { Route as SignInRouteImport } from './routes/sign-in'
+import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DemoFormAddressRouteImport } from './routes/demo/form.address'
-import { Route as DemoDbTodosRouteImport } from './routes/demo/db.todos'
-import { Route as DemoDbSimpleListRouteImport } from './routes/demo/db.simple-list'
 import { Route as ApiElectricShapeRouteImport } from './routes/api/electric.$shape'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
+import { Route as AuthedDemoDbTodosRouteImport } from './routes/_authed/demo/db.todos'
+import { Route as AuthedDemoDbSimpleListRouteImport } from './routes/_authed/demo/db.simple-list'
 
+const SignUpRoute = SignUpRouteImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignInRoute = SignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthedRoute = AuthedRouteImport.update({
+  id: '/_authed',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -25,78 +43,126 @@ const DemoFormAddressRoute = DemoFormAddressRouteImport.update({
   path: '/demo/form/address',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoDbTodosRoute = DemoDbTodosRouteImport.update({
-  id: '/demo/db/todos',
-  path: '/demo/db/todos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoDbSimpleListRoute = DemoDbSimpleListRouteImport.update({
-  id: '/demo/db/simple-list',
-  path: '/demo/db/simple-list',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiElectricShapeRoute = ApiElectricShapeRouteImport.update({
   id: '/api/electric/$shape',
   path: '/api/electric/$shape',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthedDemoDbTodosRoute = AuthedDemoDbTodosRouteImport.update({
+  id: '/demo/db/todos',
+  path: '/demo/db/todos',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedDemoDbSimpleListRoute = AuthedDemoDbSimpleListRouteImport.update({
+  id: '/demo/db/simple-list',
+  path: '/demo/db/simple-list',
+  getParentRoute: () => AuthedRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/electric/$shape': typeof ApiElectricShapeRoute
-  '/demo/db/simple-list': typeof DemoDbSimpleListRoute
-  '/demo/db/todos': typeof DemoDbTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
+  '/demo/db/simple-list': typeof AuthedDemoDbSimpleListRoute
+  '/demo/db/todos': typeof AuthedDemoDbTodosRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/electric/$shape': typeof ApiElectricShapeRoute
-  '/demo/db/simple-list': typeof DemoDbSimpleListRoute
-  '/demo/db/todos': typeof DemoDbTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
+  '/demo/db/simple-list': typeof AuthedDemoDbSimpleListRoute
+  '/demo/db/todos': typeof AuthedDemoDbTodosRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authed': typeof AuthedRouteWithChildren
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/electric/$shape': typeof ApiElectricShapeRoute
-  '/demo/db/simple-list': typeof DemoDbSimpleListRoute
-  '/demo/db/todos': typeof DemoDbTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
+  '/_authed/demo/db/simple-list': typeof AuthedDemoDbSimpleListRoute
+  '/_authed/demo/db/todos': typeof AuthedDemoDbTodosRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/sign-in'
+    | '/sign-up'
+    | '/api/auth/$'
     | '/api/electric/$shape'
+    | '/demo/form/address'
     | '/demo/db/simple-list'
     | '/demo/db/todos'
-    | '/demo/form/address'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/sign-in'
+    | '/sign-up'
+    | '/api/auth/$'
     | '/api/electric/$shape'
+    | '/demo/form/address'
     | '/demo/db/simple-list'
     | '/demo/db/todos'
-    | '/demo/form/address'
   id:
     | '__root__'
     | '/'
+    | '/_authed'
+    | '/sign-in'
+    | '/sign-up'
+    | '/api/auth/$'
     | '/api/electric/$shape'
-    | '/demo/db/simple-list'
-    | '/demo/db/todos'
     | '/demo/form/address'
+    | '/_authed/demo/db/simple-list'
+    | '/_authed/demo/db/todos'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthedRoute: typeof AuthedRouteWithChildren
+  SignInRoute: typeof SignInRoute
+  SignUpRoute: typeof SignUpRoute
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiElectricShapeRoute: typeof ApiElectricShapeRoute
-  DemoDbSimpleListRoute: typeof DemoDbSimpleListRoute
-  DemoDbTodosRoute: typeof DemoDbTodosRoute
   DemoFormAddressRoute: typeof DemoFormAddressRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sign-up': {
+      id: '/sign-up'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof SignUpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sign-in': {
+      id: '/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof SignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authed': {
+      id: '/_authed'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -111,20 +177,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoFormAddressRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/db/todos': {
-      id: '/demo/db/todos'
-      path: '/demo/db/todos'
-      fullPath: '/demo/db/todos'
-      preLoaderRoute: typeof DemoDbTodosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/db/simple-list': {
-      id: '/demo/db/simple-list'
-      path: '/demo/db/simple-list'
-      fullPath: '/demo/db/simple-list'
-      preLoaderRoute: typeof DemoDbSimpleListRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/electric/$shape': {
       id: '/api/electric/$shape'
       path: '/api/electric/$shape'
@@ -132,14 +184,50 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiElectricShapeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authed/demo/db/todos': {
+      id: '/_authed/demo/db/todos'
+      path: '/demo/db/todos'
+      fullPath: '/demo/db/todos'
+      preLoaderRoute: typeof AuthedDemoDbTodosRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/demo/db/simple-list': {
+      id: '/_authed/demo/db/simple-list'
+      path: '/demo/db/simple-list'
+      fullPath: '/demo/db/simple-list'
+      preLoaderRoute: typeof AuthedDemoDbSimpleListRouteImport
+      parentRoute: typeof AuthedRoute
+    }
   }
 }
 
+interface AuthedRouteChildren {
+  AuthedDemoDbSimpleListRoute: typeof AuthedDemoDbSimpleListRoute
+  AuthedDemoDbTodosRoute: typeof AuthedDemoDbTodosRoute
+}
+
+const AuthedRouteChildren: AuthedRouteChildren = {
+  AuthedDemoDbSimpleListRoute: AuthedDemoDbSimpleListRoute,
+  AuthedDemoDbTodosRoute: AuthedDemoDbTodosRoute,
+}
+
+const AuthedRouteWithChildren =
+  AuthedRoute._addFileChildren(AuthedRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthedRoute: AuthedRouteWithChildren,
+  SignInRoute: SignInRoute,
+  SignUpRoute: SignUpRoute,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiElectricShapeRoute: ApiElectricShapeRoute,
-  DemoDbSimpleListRoute: DemoDbSimpleListRoute,
-  DemoDbTodosRoute: DemoDbTodosRoute,
   DemoFormAddressRoute: DemoFormAddressRoute,
 }
 export const routeTree = rootRouteImport

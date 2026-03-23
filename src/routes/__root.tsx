@@ -1,11 +1,13 @@
 import {
   HeadContent,
+  Outlet,
   Scripts,
   createRootRouteWithContext,
 } from '@tanstack/react-router'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
 
+import { getSession } from '../integrations/better-auth/functions'
 import TanStackQueryProvider from '../integrations/tanstack-query/root-provider'
 
 import appCss from '../styles.css?url'
@@ -17,6 +19,11 @@ interface MyRouterContext {
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
+  beforeLoad: async () => {
+    return {
+      session: await getSession(),
+    }
+  },
   head: () => ({
     meta: [
       {
@@ -37,6 +44,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       },
     ],
   }),
+  component: RootLayout,
   shellComponent: RootDocument,
 })
 
@@ -47,13 +55,19 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body className="font-sans antialiased">
-        <TanStackQueryProvider>
-          <Header />
-          {children}
-          <Footer />
-        </TanStackQueryProvider>
+        <TanStackQueryProvider>{children}</TanStackQueryProvider>
         <Scripts />
       </body>
     </html>
+  )
+}
+
+function RootLayout() {
+  return (
+    <>
+      <Header />
+      <Outlet />
+      <Footer />
+    </>
   )
 }
