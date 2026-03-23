@@ -24,7 +24,8 @@
 				"tamasfe.even-better-toml",
 				"openai.chatgpt",
 				"sst-dev.opencode",
-				"docker.docker"
+				"docker.docker",
+				"varlock.env-spec-language"
 			]
 		}
 	},

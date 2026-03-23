@@ -3,6 +3,7 @@ import '@tanstack/react-start/server-only'
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { tanstackStartCookies } from 'better-auth/tanstack-start'
+import { ENV } from 'varlock/env'
 
 import { db } from '#/db'
 import * as schema from '#/db/schema'
@@ -12,7 +13,7 @@ const DEVELOPMENT_SECRET =
 
 function readBetterAuthSecret() {
   const secret =
-    process.env.BETTER_AUTH_SECRET ??
+    ENV.BETTER_AUTH_SECRET ??
     (process.env.NODE_ENV === 'production' ? undefined : DEVELOPMENT_SECRET)
 
   if (!secret) {
@@ -32,7 +33,7 @@ export const auth = betterAuth({
       generateId: 'uuid',
     },
   },
-  baseURL: process.env.BETTER_AUTH_URL ?? 'http://localhost:3000',
+  baseURL: ENV.BETTER_AUTH_URL,
   secret: readBetterAuthSecret(),
   emailAndPassword: {
     enabled: true,

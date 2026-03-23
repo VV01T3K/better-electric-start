@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite'
+import { varlockVitePlugin } from '@varlock/vite-integration'
 import { devtools } from '@tanstack/devtools-vite'
 import tsconfigPaths from 'vite-tsconfig-paths'
 
@@ -10,6 +11,7 @@ import { nitro } from 'nitro/vite'
 
 const config = defineConfig({
   plugins: [
+    varlockVitePlugin({ ssrInjectMode: 'auto-load' }),
     devtools(),
     nitro({ preset: 'bun', rollupConfig: { external: [/^@sentry\//] } }),
     tsconfigPaths({ projects: ['./tsconfig.json'] }),
