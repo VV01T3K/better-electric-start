@@ -1,12 +1,10 @@
 import { z } from 'zod'
 
 const simpleListItem = z.object({
-  id: z.uuid().default(() => crypto.randomUUID()),
+  id: z.uuid().default(() => crypto.randomUUID()).brand<'simple_list_items'>(),
   label: z.string().trim().min(1, 'List item text is required.'),
   created_at: z.coerce.date().default(() => new Date()),
 })
-
-export type SimpleListItem = z.infer<typeof simpleListItem>
 
 export const simpleListItemServerSchema = {
   row: simpleListItem,

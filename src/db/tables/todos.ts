@@ -2,8 +2,8 @@ import '@tanstack/react-start/server-only'
 
 import { boolean, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 
-import type { Todo } from '#/db/schemas/todos'
-import type { Equal, Expect } from '#/db/typecheck'
+import { todoServerSchema } from '#/db/schemas/todos'
+import { assertTableSchema } from '#/db/typecheck'
 import { user } from './auth'
 
 export const todos = pgTable('todos', {
@@ -18,6 +18,4 @@ export const todos = pgTable('todos', {
     .defaultNow(),
 })
 
-export type TodoTableMatchesContract = Expect<
-  Equal<typeof todos.$inferSelect, Todo>
->
+void assertTableSchema(todos)(todoServerSchema.row)

@@ -2,8 +2,8 @@ import '@tanstack/react-start/server-only'
 
 import { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 
-import type { SimpleListItem } from '#/db/schemas/simple-list-items'
-import type { Equal, Expect } from '#/db/typecheck'
+import { simpleListItemServerSchema } from '#/db/schemas/simple-list-items'
+import { assertTableSchema } from '#/db/typecheck'
 
 export const simpleListItems = pgTable('simple_list_items', {
   id: uuid().primaryKey(),
@@ -13,6 +13,4 @@ export const simpleListItems = pgTable('simple_list_items', {
     .defaultNow(),
 })
 
-export type SimpleListItemTableMatchesContract = Expect<
-  Equal<typeof simpleListItems.$inferSelect, SimpleListItem>
->
+void assertTableSchema(simpleListItems)(simpleListItemServerSchema.row)
