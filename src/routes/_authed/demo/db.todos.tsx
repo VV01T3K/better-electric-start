@@ -14,6 +14,7 @@ export const Route = createFileRoute('/_authed/demo/db/todos')({
 })
 
 function TodoDemoPage() {
+  const { user } = Route.useRouteContext()
   const { data: todos, isLoading } = useLiveQuery(
     (query) =>
       query
@@ -35,6 +36,7 @@ function TodoDemoPage() {
       const newTodo = todoSchema.add.parse(value)
       const transaction = todoCollection.insert({
         text: newTodo.text,
+        user_id: user.id,
       })
 
       await transaction.isPersisted.promise

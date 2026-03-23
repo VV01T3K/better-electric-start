@@ -4,7 +4,7 @@ const todo = z.object({
   id: z.uuid().default(() => crypto.randomUUID()).brand<'todos'>(),
   text: z.string().trim().min(1, 'Todo text is required.'),
   completed: z.boolean().default(false),
-  user_id: z.uuid().default('00000000-0000-0000-0000-000000000000').brand<'users'>(),
+  user_id: z.uuid().brand<'users'>(),
   created_at: z.coerce.date().default(() => new Date()),
 })
 
