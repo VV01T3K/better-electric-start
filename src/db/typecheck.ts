@@ -22,9 +22,11 @@ type Exact<A, B> =
       : false
     : false
 
+type MatchingSchema<TTable extends Table, TSchema extends z.ZodType> =
+  Exact<InferSelectModel<TTable>, Unbrand<z.output<TSchema>>> extends true
+    ? TSchema
+    : never
+
 export function assertTableSchema<TTable extends Table>(table: TTable) {
-  return <TSchema extends z.ZodType>(_schema: TSchema) =>
-    table as Exact<InferSelectModel<TTable>, Unbrand<z.output<TSchema>>> extends true
-      ? TTable
-      : never
+  return <TSchema extends z.ZodType>(_schema: MatchingSchema<TTable, TSchema>) => table
 }
