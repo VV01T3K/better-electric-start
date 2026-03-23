@@ -6,7 +6,7 @@ const simpleListItem = z.object({
   created_at: z.coerce.date().default(() => new Date()),
 })
 
-export type SimpleListItem = z.input<typeof simpleListItem>
+export type SimpleListItem = z.infer<typeof simpleListItem>
 
 export const simpleListItemServerSchema = {
   row: simpleListItem,

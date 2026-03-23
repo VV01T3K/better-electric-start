@@ -7,7 +7,7 @@ const todo = z.object({
   created_at: z.coerce.date().default(() => new Date()),
 })
 
-export type Todo = z.input<typeof todo>
+export type Todo = z.infer<typeof todo>
 
 export const todoServerSchema = {
   row: todo,
