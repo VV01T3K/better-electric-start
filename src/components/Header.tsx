@@ -22,11 +22,11 @@ export default function Header() {
   }
 
   return (
-    <header className="border-b border-[var(--line)] px-4">
+    <header className="border-b border-(--line) px-4">
       <nav className="page-wrap flex items-center gap-4 py-3">
         <Link
           to="/"
-          className="text-sm font-semibold text-[var(--sea-ink)] no-underline"
+          className="text-sm font-semibold text-(--sea-ink) no-underline"
         >
           Home
         </Link>
@@ -34,13 +34,13 @@ export default function Header() {
           <>
             <Link
               to="/demo/db/todos"
-              className="text-sm text-[var(--sea-ink-soft)] no-underline hover:text-[var(--sea-ink)]"
+              className="text-sm text-(--sea-ink-soft) no-underline hover:text-(--sea-ink)"
             >
               Todos
             </Link>
             <Link
               to="/demo/db/simple-list"
-              className="text-sm text-[var(--sea-ink-soft)] no-underline hover:text-[var(--sea-ink)]"
+              className="text-sm text-(--sea-ink-soft) no-underline hover:text-(--sea-ink)"
             >
               Simple List
             </Link>
@@ -49,14 +49,14 @@ export default function Header() {
         <div className="ml-auto flex items-center gap-3">
           {session?.user ? (
             <>
-              <span className="hidden text-sm text-[var(--sea-ink-soft)] sm:inline">
+              <span className="hidden text-sm text-(--sea-ink-soft) sm:inline">
                 {session.user.email}
               </span>
               <button
                 type="button"
                 onClick={() => void handleSignOut()}
                 disabled={isSigningOut}
-                className="rounded-full border border-[var(--line)] px-3 py-1.5 text-sm text-[var(--sea-ink)] transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
+                className="rounded-full border border-(--line) px-3 py-1.5 text-sm text-(--sea-ink) transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isSigningOut ? 'Signing out...' : 'Sign out'}
               </button>
@@ -65,13 +65,13 @@ export default function Header() {
             <>
               <Link
                 to="/sign-in"
-                className="text-sm text-[var(--sea-ink-soft)] no-underline hover:text-[var(--sea-ink)]"
+                className="text-sm text-(--sea-ink-soft) no-underline hover:text-(--sea-ink)"
               >
                 Sign in
               </Link>
               <Link
                 to="/sign-up"
-                className="rounded-full bg-[var(--lagoon-deep)] px-3 py-1.5 text-sm font-medium text-white no-underline transition hover:opacity-90"
+                className="rounded-full bg-(--lagoon-deep) px-3 py-1.5 text-sm font-medium text-white no-underline transition hover:opacity-90"
               >
                 {isPending ? '...' : 'Sign up'}
               </Link>

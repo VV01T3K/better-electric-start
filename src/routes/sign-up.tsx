@@ -65,7 +65,7 @@ function SignUpPage() {
       footerLabel="Sign in"
     >
       <form className="space-y-4" onSubmit={(event) => void handleSubmit(event)}>
-        <label className="block space-y-2 text-sm text-[var(--sea-ink)]">
+        <label className="block space-y-2 text-sm text-(--sea-ink)">
           <span>Name</span>
           <input
             type="text"
@@ -73,11 +73,11 @@ function SignUpPage() {
             required
             value={name}
             onChange={(event) => setName(event.target.value)}
-            className="w-full rounded-2xl border border-[var(--line)] px-3 py-2 outline-none transition focus:border-[var(--lagoon-deep)]"
+            className="w-full rounded-2xl border border-(--line) px-3 py-2 outline-none transition focus:border-(--lagoon-deep)"
           />
         </label>
 
-        <label className="block space-y-2 text-sm text-[var(--sea-ink)]">
+        <label className="block space-y-2 text-sm text-(--sea-ink)">
           <span>Email</span>
           <input
             type="email"
@@ -85,11 +85,11 @@ function SignUpPage() {
             required
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            className="w-full rounded-2xl border border-[var(--line)] px-3 py-2 outline-none transition focus:border-[var(--lagoon-deep)]"
+            className="w-full rounded-2xl border border-(--line) px-3 py-2 outline-none transition focus:border-(--lagoon-deep)"
           />
         </label>
 
-        <label className="block space-y-2 text-sm text-[var(--sea-ink)]">
+        <label className="block space-y-2 text-sm text-(--sea-ink)">
           <span>Password</span>
           <input
             type="password"
@@ -98,7 +98,7 @@ function SignUpPage() {
             minLength={8}
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            className="w-full rounded-2xl border border-[var(--line)] px-3 py-2 outline-none transition focus:border-[var(--lagoon-deep)]"
+            className="w-full rounded-2xl border border-(--line) px-3 py-2 outline-none transition focus:border-(--lagoon-deep)"
           />
         </label>
 
@@ -109,7 +109,7 @@ function SignUpPage() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full rounded-2xl bg-[var(--lagoon-deep)] px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+          className="w-full rounded-2xl bg-(--lagoon-deep) px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isSubmitting ? 'Creating account...' : 'Create account'}
         </button>
