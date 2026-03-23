@@ -2,10 +2,10 @@ import { createServerFn } from '@tanstack/react-start'
 import { eq } from 'drizzle-orm'
 
 import { db } from '#/db'
-import { todoServerSchema, todos } from '#/db/schemas/todos'
+import { todoServerSchema } from '#/db/schemas/todos'
+import { todos } from '#/db/tables/todos'
 
 import { readTxId } from '#/integrations/electric/read-tx-id'
-
 
 export const insertTodo = createServerFn()
   .inputValidator(todoServerSchema.insert)

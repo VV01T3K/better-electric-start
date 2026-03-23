@@ -1,18 +1,12 @@
-import { createSelectSchema } from 'drizzle-orm/zod'
-import { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { z } from 'zod'
 
-export const simpleListItems = pgTable('simple_list_items', {
-  id: uuid().primaryKey(),
-  label: text().notNull(),
-  createdAt: timestamp('created_at', { withTimezone: true })
-    .notNull()
-    .defaultNow(),
+const simpleListItem = z.object({
+  id: z.uuid().brand<'simple_list_items'>(),
+  label: z.string().trim().min(1, 'List item text is required.'),
+  createdAt: z.date(),
 })
 
-export const simpleListItem = createSelectSchema(simpleListItems, {
-  id: (s) => s.brand<'simple_list_items'>(),
-  label: (s) => s.trim().min(1, 'List item text is required.'),
-})
+export type SimpleListItem = z.input<typeof simpleListItem>
 
 export const simpleListItemServerSchema = {
   row: simpleListItem,

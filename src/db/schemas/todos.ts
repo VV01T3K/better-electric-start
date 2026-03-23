@@ -1,19 +1,13 @@
-import { createSelectSchema } from 'drizzle-orm/zod'
-import { boolean, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { z } from 'zod'
 
-export const todos = pgTable('todos', {
-  id: uuid().primaryKey(),
-  text: text().notNull(),
-  completed: boolean().notNull().default(false),
-  createdAt: timestamp('created_at', { withTimezone: true })
-    .notNull()
-    .defaultNow(),
+const todo = z.object({
+  id: z.uuid().brand<'todos'>(),
+  text: z.string().trim().min(1, 'Todo text is required.'),
+  completed: z.boolean(),
+  createdAt: z.date(),
 })
 
-const todo = createSelectSchema(todos, {
-  id: (s) => s.brand<'todos'>(),
-  text: (s) => s.trim().min(1, 'Todo text is required.'),
-})
+export type Todo = z.input<typeof todo>
 
 export const todoServerSchema = {
   row: todo,

@@ -12,3 +12,4 @@ skills:
   - task: "preloading TanStack DB collections in TanStack Start routes or handling SSR boundaries"
     load: "/workspaces/better-electric-start/node_modules/@tanstack/db/skills/meta-framework/SKILL.md"
 <!-- intent-skills:end -->
+bun via mise exec -- bun ....

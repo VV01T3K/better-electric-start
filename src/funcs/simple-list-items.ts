@@ -1,10 +1,8 @@
 import { createServerFn } from '@tanstack/react-start'
 
 import { db } from '#/db'
-import {
-  simpleListItemServerSchema,
-  simpleListItems,
-} from '#/db/schemas/simple-list-items'
+import { simpleListItemServerSchema } from '#/db/schemas/simple-list-items'
+import { simpleListItems } from '#/db/tables/simple-list-items'
 
 import { readTxId } from '#/integrations/electric/read-tx-id'
 
