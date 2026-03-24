@@ -1,5 +1,5 @@
 import { createServerFn } from '@tanstack/react-start'
-import { and, eq } from 'drizzle-orm'
+import { and, count, eq } from 'drizzle-orm'
 
 import { db } from '#/db'
 import { todoServerSchema } from '#/db/schemas/todos'
@@ -66,3 +66,17 @@ export const deleteTodo = createServerFn({ method: 'POST' })
       return { txid: await readTxId(tx) }
     })
   })
+
+export const getTodoCount = createServerFn({ method: 'GET' }).handler(
+  async () => {
+    const session = await requireCurrentSession()
+    const [result] = await db
+      .select({
+        count: count(),
+      })
+      .from(todos)
+      .where(eq(todos.user_id, session.user.id))
+
+    return result?.count ?? 0
+  },
+)

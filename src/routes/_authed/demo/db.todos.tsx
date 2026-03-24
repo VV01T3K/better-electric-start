@@ -1,29 +1,21 @@
 import { useForm } from '@tanstack/react-form'
 import { useLiveQuery } from '@tanstack/react-db'
-import { createFileRoute } from '@tanstack/react-router'
+import { ClientOnly, createFileRoute } from '@tanstack/react-router'
 
-import { todoCollection } from '#/db/collections'
 import { todoSchema } from '#/db/schemas'
+import { getTodoCount } from '#/funcs/todos'
+import { demoTodoCollection } from './-db.todos.collection'
 
 export const Route = createFileRoute('/_authed/demo/db/todos')({
-  ssr: false,
-  loader: async () => {
-    await todoCollection.preload()
-  },
+  loader: async () => ({
+    skeletonCount: await getTodoCount(),
+  }),
   component: TodoDemoPage,
 })
 
 function TodoDemoPage() {
   const { user } = Route.useRouteContext()
-  const { data: todos, isLoading } = useLiveQuery(
-    (query) =>
-      query
-        .from({ todo: todoCollection })
-        .orderBy(({ todo }) => todo.created_at, 'desc'),
-    [],
-  )
-  const todoItems = todos ?? []
-
+  const { skeletonCount } = Route.useLoaderData()
   const form = useForm({
     defaultValues: {
       text: '',
@@ -34,7 +26,7 @@ function TodoDemoPage() {
     },
     onSubmit: async ({ value, formApi }) => {
       const newTodo = todoSchema.add.parse(value)
-      const transaction = todoCollection.insert({
+      const transaction = demoTodoCollection.insert({
         text: newTodo.text,
         user_id: user.id,
       })
@@ -115,46 +107,87 @@ function TodoDemoPage() {
           </form.Subscribe>
         </form>
 
-        <div className="space-y-2">
-          {isLoading ? (
-            <p className="text-sm text-(--sea-ink-soft)">Connecting...</p>
-          ) : todoItems.length === 0 ? (
-            <p className="text-sm text-(--sea-ink-soft)">No todos yet.</p>
-          ) : (
-            todoItems.map((todo) => (
-              <article
-                key={todo.id}
-                className="flex items-center gap-3 rounded border border-(--line) px-3 py-2"
-              >
-                <input
-                  type="checkbox"
-                  checked={todo.completed}
-                  onChange={() => {
-                    todoCollection.update(todo.id, (draft) => {
-                      draft.completed = !draft.completed
-                    })
-                  }}
-                />
-                <span
-                  className={`flex-1 text-sm ${todo.completed
-                    ? 'text-(--sea-ink-soft) line-through'
-                    : 'text-(--sea-ink)'
-                    }`}
-                >
-                  {todo.text}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => todoCollection.delete(todo.id)}
-                  className="text-xs text-(--sea-ink-soft) transition hover:text-(--sea-ink)"
-                >
-                  Delete
-                </button>
-              </article>
-            ))
-          )}
-        </div>
+        <ClientOnly fallback={<TodoListSkeleton count={skeletonCount} />}>
+          <TodoClientList skeletonCount={skeletonCount} />
+        </ClientOnly>
       </section>
     </main>
+  )
+}
+
+function TodoClientList({ skeletonCount }: { skeletonCount: number }) {
+  const { data: todos, isLoading } = useLiveQuery(
+    (query) =>
+      query
+        .from({ todo: demoTodoCollection })
+        .orderBy(({ todo }) => todo.created_at, 'desc'),
+    [],
+  )
+  const todoItems = todos ?? []
+
+  if (isLoading) {
+    return <TodoListSkeleton count={skeletonCount} />
+  }
+
+  return (
+    <div className="space-y-2">
+      {todoItems.length === 0 ? (
+        <p className="text-sm text-(--sea-ink-soft)">No todos yet.</p>
+      ) : (
+        todoItems.map((todo) => (
+          <article
+            key={todo.id}
+            className="flex items-center gap-3 rounded border border-(--line) px-3 py-2"
+          >
+            <input
+              type="checkbox"
+              checked={todo.completed}
+              onChange={() => {
+                demoTodoCollection.update(todo.id, (draft) => {
+                  draft.completed = !draft.completed
+                })
+              }}
+            />
+            <span
+              className={`flex-1 text-sm ${todo.completed
+                ? 'text-(--sea-ink-soft) line-through'
+                : 'text-(--sea-ink)'
+                }`}
+            >
+              {todo.text}
+            </span>
+            <button
+              type="button"
+              onClick={() => demoTodoCollection.delete(todo.id)}
+              className="text-xs text-(--sea-ink-soft) transition hover:text-(--sea-ink)"
+            >
+              Delete
+            </button>
+          </article>
+        ))
+      )}
+    </div>
+  )
+}
+
+function TodoListSkeleton({ count }: { count: number }) {
+  if (count === 0) {
+    return <p className="text-sm text-(--sea-ink-soft)">No todos yet.</p>
+  }
+
+  return (
+    <div className="space-y-2">
+      {Array.from({ length: count }, (_, index) => (
+        <div
+          key={index}
+          aria-hidden="true"
+          className="flex items-center gap-3 rounded border border-(--line) px-3 py-2"
+        >
+          <div className="size-3 rounded-sm border border-(--line)" />
+          <div className="h-5 flex-1 rounded bg-gray-100" />
+          <div className="h-5 w-12 rounded bg-gray-100" />
+        </div>
+      ))}
+    </div>
   )
 }
