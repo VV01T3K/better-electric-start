@@ -17,6 +17,9 @@ export const todos = pgTable('todos', {
   created_at: timestamp({ withTimezone: true })
     .notNull()
     .defaultNow(),
+  updated_at: timestamp({ withTimezone: true })
+    .notNull()
+    .defaultNow(),
 })
 
 export const todoRelations = defineRelationsPart({ users, todos }, (r) => ({

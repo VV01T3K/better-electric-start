@@ -11,6 +11,9 @@ export const simpleListItems = pgTable('simple_list_items', {
   created_at: timestamp({ withTimezone: true })
     .notNull()
     .defaultNow(),
+  updated_at: timestamp({ withTimezone: true })
+    .notNull()
+    .defaultNow(),
 })
 
 void assertTableSchema(simpleListItems)(simpleListItemServerSchema.row)

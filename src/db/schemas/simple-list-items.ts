@@ -2,8 +2,11 @@ import { z } from 'zod'
 
 const simpleListItem = z.object({
   id: z.uuid().default(() => crypto.randomUUID()).brand<'simple_list_items'>(),
-  label: z.string().trim().min(1, 'List item text is required.'),
   created_at: z.coerce.date().default(() => new Date()),
+  updated_at: z.coerce.date().default(() => new Date()),
+  label: z.string().trim()
+    .min(1, 'List item text is required.')
+    .max(61, 'List item text must be 61 characters or less.'),
 })
 
 export const simpleListItemServerSchema = {
