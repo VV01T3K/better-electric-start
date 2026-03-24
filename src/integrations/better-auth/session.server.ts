@@ -2,7 +2,7 @@ import '@tanstack/react-start/server-only'
 
 import { getRequestHeaders } from '@tanstack/react-start/server'
 
-import { auth } from '#/integrations/better-auth/server'
+import { auth } from '#/integrations/better-auth/config'
 
 export async function getSessionFromHeaders(headers: Headers) {
   return auth.api.getSession({

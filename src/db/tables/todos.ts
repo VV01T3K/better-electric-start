@@ -4,7 +4,7 @@ import { boolean, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 
 import { todoServerSchema } from '#/db/schemas/todos'
 import { assertTableSchema } from '#/db/typecheck'
-import { user } from './auth'
+import { users } from './auth.gen'
 
 export const todos = pgTable('todos', {
   id: uuid().primaryKey(),
@@ -12,7 +12,7 @@ export const todos = pgTable('todos', {
   completed: boolean().notNull().default(false),
   user_id: uuid()
     .notNull()
-    .references(() => user.id, { onDelete: 'cascade' }),
+    .references(() => users.id, { onDelete: 'cascade' }),
   created_at: timestamp({ withTimezone: true })
     .notNull()
     .defaultNow(),

@@ -1,7 +1,7 @@
 import '@tanstack/react-start/server-only'
 
-import { betterAuth } from 'better-auth'
-import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+import { betterAuth } from 'better-auth/minimal'
+import { drizzleAdapter } from '@better-auth/drizzle-adapter/relations-v2'
 import { tanstackStartCookies } from 'better-auth/tanstack-start'
 import { ENV } from 'varlock/env'
 
@@ -25,13 +25,19 @@ function readBetterAuthSecret() {
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
-    provider: 'pg',
     schema,
+    provider: 'pg',
+    transaction: true,
+    camelCase: false,
+    usePlural: true,
   }),
   advanced: {
     database: {
       generateId: 'uuid',
     },
+  },
+  experimental: {
+    joins: true,
   },
   baseURL: ENV.BETTER_AUTH_URL,
   secret: readBetterAuthSecret(),
