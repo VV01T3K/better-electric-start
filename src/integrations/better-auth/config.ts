@@ -8,21 +8,6 @@ import { ENV } from 'varlock/env'
 import { db } from '#/db'
 import * as schema from '#/db/tables/_schema'
 
-const DEVELOPMENT_SECRET =
-  'dev-only-better-auth-secret-change-this-before-production'
-
-function readBetterAuthSecret() {
-  const secret =
-    ENV.BETTER_AUTH_SECRET ??
-    (process.env.NODE_ENV === 'production' ? undefined : DEVELOPMENT_SECRET)
-
-  if (!secret) {
-    throw new Error('BETTER_AUTH_SECRET is required in production.')
-  }
-
-  return secret
-}
-
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     schema,
@@ -40,7 +25,7 @@ export const auth = betterAuth({
     joins: true,
   },
   baseURL: ENV.BETTER_AUTH_URL,
-  secret: readBetterAuthSecret(),
+  secret: ENV.BETTER_AUTH_SECRET,
   emailAndPassword: {
     enabled: true,
   },
