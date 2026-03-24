@@ -1,28 +1,20 @@
 import { useForm } from '@tanstack/react-form'
 import { useLiveQuery } from '@tanstack/react-db'
-import { createFileRoute } from '@tanstack/react-router'
+import { ClientOnly, createFileRoute } from '@tanstack/react-router'
 
-import { simpleListCollection } from '#/db/collections'
 import { simpleListItemClientSchema } from '#/db/schemas'
+import { getSimpleListItemCount } from '#/funcs/simple-list-items'
+import { demoSimpleListCollection } from './-db.simple-list.collection'
 
 export const Route = createFileRoute('/_authed/demo/db/simple-list')({
-  ssr: false,
-  loader: async () => {
-    await simpleListCollection.preload()
-  },
+  loader: async () => ({
+    skeletonCount: await getSimpleListItemCount(),
+  }),
   component: SimpleListDemoPage,
 })
 
 function SimpleListDemoPage() {
-  const { data: items, isLoading } = useLiveQuery(
-    (query) =>
-      query
-        .from({ item: simpleListCollection })
-        .orderBy(({ item }) => item.created_at, 'desc'),
-    [],
-  )
-  const listItems = items ?? []
-
+  const { skeletonCount } = Route.useLoaderData()
   const form = useForm({
     defaultValues: {
       label: '',
@@ -32,7 +24,7 @@ function SimpleListDemoPage() {
       onSubmit: simpleListItemClientSchema.add,
     },
     onSubmit: async ({ value, formApi }) => {
-      const transaction = simpleListCollection.insert({
+      const transaction = demoSimpleListCollection.insert({
         label: value.label,
       })
 
@@ -111,23 +103,62 @@ function SimpleListDemoPage() {
           </form.Subscribe>
         </form>
 
-        <div className="space-y-2">
-          {isLoading ? (
-            <p className="text-sm text-(--sea-ink-soft)">Connecting...</p>
-          ) : listItems.length === 0 ? (
-            <p className="text-sm text-(--sea-ink-soft)">No items yet.</p>
-          ) : (
-            listItems.map((item) => (
-              <article
-                key={item.id}
-                className="rounded border border-(--line) px-3 py-2 text-sm text-(--sea-ink)"
-              >
-                {item.label}
-              </article>
-            ))
-          )}
-        </div>
+        <ClientOnly fallback={<SimpleListSkeleton count={skeletonCount} />}>
+          <SimpleListClientList skeletonCount={skeletonCount} />
+        </ClientOnly>
       </section>
     </main>
+  )
+}
+
+function SimpleListClientList({ skeletonCount }: { skeletonCount: number }) {
+  const { data: items, isLoading } = useLiveQuery(
+    (query) =>
+      query
+        .from({ item: demoSimpleListCollection })
+        .orderBy(({ item }) => item.created_at, 'desc'),
+    [],
+  )
+  const listItems = items ?? []
+
+  if (isLoading) {
+    return <SimpleListSkeleton count={skeletonCount} />
+  }
+
+  return (
+    <div className="space-y-2">
+      {listItems.length === 0 ? (
+        <p className="text-sm text-(--sea-ink-soft)">No items yet.</p>
+      ) : (
+        listItems.map((item) => (
+          <article
+            key={item.id}
+            className="rounded border border-(--line) px-3 py-2 text-sm text-(--sea-ink)"
+          >
+            {item.label}
+          </article>
+        ))
+      )}
+    </div>
+  )
+}
+
+function SimpleListSkeleton({ count }: { count: number }) {
+  if (count === 0) {
+    return <p className="text-sm text-(--sea-ink-soft)">No items yet.</p>
+  }
+
+  return (
+    <div className="space-y-2">
+      {Array.from({ length: count }, (_, index) => (
+        <div
+          key={index}
+          aria-hidden="true"
+          className="rounded border border-(--line) px-3 py-2"
+        >
+          <div className="h-5 rounded bg-gray-100" />
+        </div>
+      ))}
+    </div>
   )
 }

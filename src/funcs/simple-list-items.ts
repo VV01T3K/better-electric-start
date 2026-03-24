@@ -1,4 +1,5 @@
 import { createServerFn } from '@tanstack/react-start'
+import { count } from 'drizzle-orm'
 
 import { db } from '#/db'
 import { simpleListItemServerSchema } from '#/db/schemas/simple-list-items'
@@ -22,3 +23,17 @@ export const insertSimpleListItem = createServerFn({ method: 'POST' })
       return { txid: await readTxId(tx) }
     })
   })
+
+export const getSimpleListItemCount = createServerFn({ method: 'GET' }).handler(
+  async () => {
+    await requireCurrentSession()
+
+    const [result] = await db
+      .select({
+        count: count(),
+      })
+      .from(simpleListItems)
+
+    return result?.count ?? 0
+  },
+)
