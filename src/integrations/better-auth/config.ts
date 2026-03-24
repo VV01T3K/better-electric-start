@@ -6,7 +6,7 @@ import { tanstackStartCookies } from 'better-auth/tanstack-start'
 import { ENV } from 'varlock/env'
 
 import { db } from '#/db'
-import * as schema from '#/db/schema'
+import * as schema from '#/db/tables/_schema'
 
 const DEVELOPMENT_SECRET =
   'dev-only-better-auth-secret-change-this-before-production'
