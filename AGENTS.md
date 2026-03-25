@@ -15,3 +15,5 @@ skills:
 
 Only for running manually by agent and not for user prompts nor scripts only agents integrated terminal.
 bun via mise exec -- bun ....
+
+Do not read archive folders unless explicitly asked for, as they may contain outdated information.
