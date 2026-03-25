@@ -9,7 +9,7 @@ const authSearchSchema = z.object({
   redirect: z.string().optional(),
 })
 
-export const Route = createFileRoute('/sign-up')({
+export const Route = createFileRoute('/auth/sign-in')({
   validateSearch: authSearchSchema,
   beforeLoad: async ({ context }) => {
     const { session } = context
@@ -18,13 +18,12 @@ export const Route = createFileRoute('/sign-up')({
       throw redirect({ to: '/demo/db/todos' })
     }
   },
-  component: SignUpPage,
+  component: SignInPage,
 })
 
-function SignUpPage() {
+function SignInPage() {
   const navigate = useNavigate()
   const search = Route.useSearch()
-  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -35,8 +34,7 @@ function SignUpPage() {
     setIsSubmitting(true)
     setErrorMessage(null)
 
-    const { error } = await authClient.signUp.email({
-      name,
+    const { error } = await authClient.signIn.email({
       email,
       password,
     })
@@ -44,7 +42,7 @@ function SignUpPage() {
     setIsSubmitting(false)
 
     if (error) {
-      setErrorMessage(error.message || 'Unable to create your account.')
+      setErrorMessage(error.message || 'Unable to sign in.')
       return
     }
 
@@ -58,25 +56,13 @@ function SignUpPage() {
 
   return (
     <AuthCard
-      title="Create account"
-      description="Start with email/password auth and use the synced demo routes behind a real session."
-      footerText="Already have an account?"
-      footerHref="/sign-in"
-      footerLabel="Sign in"
+      title="Sign in"
+      description="Access your private Electric-synced todos and the shared live list."
+      footerText="Need an account?"
+      footerHref="/auth/sign-up"
+      footerLabel="Create one"
     >
       <form className="space-y-4" onSubmit={(event) => void handleSubmit(event)}>
-        <label className="block space-y-2 text-sm text-(--sea-ink)">
-          <span>Name</span>
-          <input
-            type="text"
-            autoComplete="name"
-            required
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            className="w-full rounded-2xl border border-(--line) px-3 py-2 outline-none transition focus:border-(--lagoon-deep)"
-          />
-        </label>
-
         <label className="block space-y-2 text-sm text-(--sea-ink)">
           <span>Email</span>
           <input
@@ -93,7 +79,7 @@ function SignUpPage() {
           <span>Password</span>
           <input
             type="password"
-            autoComplete="new-password"
+            autoComplete="current-password"
             required
             minLength={8}
             value={password}
@@ -111,7 +97,7 @@ function SignUpPage() {
           disabled={isSubmitting}
           className="w-full rounded-2xl bg-(--lagoon-deep) px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {isSubmitting ? 'Creating account...' : 'Create account'}
+          {isSubmitting ? 'Signing in...' : 'Sign in'}
         </button>
       </form>
     </AuthCard>

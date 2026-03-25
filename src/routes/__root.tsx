@@ -8,7 +8,7 @@ import Footer from '../components/Footer'
 import Header from '../components/Header'
 
 import { getSession } from '../integrations/better-auth/functions'
-import TanStackQueryProvider from '../integrations/tanstack-query/root-provider'
+import TanStackQueryProvider from '../integrations/tanstack/query/root-provider'
 
 import appCss from '../styles.css?url'
 

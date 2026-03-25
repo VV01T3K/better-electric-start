@@ -17,7 +17,7 @@ export type AuthorizedElectricProxyContext = {
 }
 
 async function getElectricShapeDefinitions() {
-  await import('#/db/collections')
+  await import('#/integrations/tanstack/db/collections')
   return getRegisteredElectricShapeDefinitions()
 }
 

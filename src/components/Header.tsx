@@ -17,7 +17,7 @@ export default function Header() {
     setIsSigningOut(false)
 
     if (!error) {
-      await navigate({ to: '/sign-in' })
+      await navigate({ to: '/auth/sign-in' })
     }
   }
 
@@ -64,13 +64,13 @@ export default function Header() {
           ) : (
             <>
               <Link
-                to="/sign-in"
+                to="/auth/sign-in"
                 className="text-sm text-(--sea-ink-soft) no-underline hover:text-(--sea-ink)"
               >
                 Sign in
               </Link>
               <Link
-                to="/sign-up"
+                to="/auth/sign-up"
                 className="rounded-full bg-(--lagoon-deep) px-3 py-1.5 text-sm font-medium text-white no-underline transition hover:opacity-90"
               >
                 {isPending ? '...' : 'Sign up'}

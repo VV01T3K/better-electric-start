@@ -44,13 +44,13 @@ function App() {
           ) : (
             <>
               <Link
-                to="/sign-up"
+                to="/auth/sign-up"
                 className="rounded-full bg-(--lagoon-deep) px-4 py-2 text-sm font-medium text-white no-underline"
               >
                 Create account
               </Link>
               <Link
-                to="/sign-in"
+                to="/auth/sign-in"
                 className="rounded-full border border-(--line) px-4 py-2 text-sm font-medium text-(--sea-ink) no-underline"
               >
                 Sign in
