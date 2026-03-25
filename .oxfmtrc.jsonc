@@ -6,10 +6,11 @@
   "bracketSameLine": false,
   "bracketSpacing": true,
   "endOfLine": "lf",
+  "ignorePatterns": ["env.d.ts", "src/**/*.gen.ts", "drizzle/**/snapshot.json"],
   "experimentalSortImports": {
     "ignoreCase": true,
     "newlinesBetween": true,
-    "order": "asc"
+    "order": "asc",
   },
   "experimentalSortPackageJson": true,
   "jsxSingleQuote": false,
@@ -19,5 +20,5 @@
   "singleQuote": false,
   "tabWidth": 2,
   "trailingComma": "es5",
-  "useTabs": false
+  "useTabs": false,
 }
