@@ -6,6 +6,7 @@ DO_NOT_TRACK = "1"
 [tools]
 node = "latest"
 bun = "latest"
+"npm:varlock" = "latest"
 # "npm:turbo" = "latest"
 
 # [hooks]
