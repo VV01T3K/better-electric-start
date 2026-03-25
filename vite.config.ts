@@ -1,5 +1,3 @@
-/// <reference types="vitest/config" />
-
 import babel from "@rolldown/plugin-babel";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
