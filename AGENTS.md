@@ -14,7 +14,7 @@ skills:
   load: "/workspaces/better-electric-start/node_modules/@tanstack/react-db/skills/react-db/SKILL.md"
 - task: "preloading TanStack DB collections in TanStack Start routes or handling SSR boundaries"
   load: "/workspaces/better-electric-start/node_modules/@tanstack/db/skills/meta-framework/SKILL.md"
-     <!-- intent-skills:end -->
+      <!-- intent-skills:end -->
 
 Only for running manually by agent and not for user prompts nor scripts only agents integrated terminal.
 bun via mise exec -- bun ....
