@@ -1,7 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { ENV } from 'varlock/env'
 
-import { createElectricProxyHandler } from '#/integrations/electric/proxy'
+import { createElectricProxyHandler } from '#/integrations/electric/proxy/handler'
+import { electricProxyMiddleware } from '#/integrations/electric/proxy/middleware'
 
 const handleElectricProxyRequest = createElectricProxyHandler({
   electricUrl: ENV.ELECTRIC_URL,
@@ -11,9 +12,10 @@ const handleElectricProxyRequest = createElectricProxyHandler({
 
 export const Route = createFileRoute('/api/electric/$shape')({
   server: {
+    middleware: [electricProxyMiddleware],
     handlers: {
-      GET: ({ request, params }) =>
-        handleElectricProxyRequest(request, params.shape),
+      GET: ({ request, context }) =>
+        handleElectricProxyRequest(request, context.electricProxy),
     },
   },
 })

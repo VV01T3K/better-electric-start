@@ -6,6 +6,7 @@ import { insertTodo, deleteTodo, updateTodo } from '#/funcs/todos'
 
 export const todoCollection = createElectricCollection({
   id: 'todos',
+  scope: 'user-scoped',
   schema: todoServerSchema.row,
   onInsert: insertTodo,
   onUpdate: updateTodo,
@@ -14,6 +15,7 @@ export const todoCollection = createElectricCollection({
 
 export const simpleListCollection = createElectricCollection({
   id: 'simple-list-items',
+  scope: 'public',
   schema: simpleListItemServerSchema.row,
   onInsert: insertSimpleListItem,
 })

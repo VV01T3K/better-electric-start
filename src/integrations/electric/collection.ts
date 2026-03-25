@@ -3,10 +3,22 @@ import {
   type ElectricCollectionUtils,
   type Txid,
 } from '@tanstack/electric-db-collection'
-import { createCollection, type InferSchemaOutput } from '@tanstack/react-db'
+import {
+  createCollection,
+  type Collection,
+  type InferSchemaInput,
+  type InferSchemaOutput,
+} from '@tanstack/react-db'
 
 import type { CollectionConfig } from '@tanstack/react-db'
 import type { StandardSchemaV1 } from '@standard-schema/spec'
+
+import {
+  getElectricShapeName,
+  registerElectricShapeDefinition,
+  type ElectricCollectionScope,
+  type ElectricShapeMetadataCarrier,
+} from './metadata'
 
 type RowWithId = {
   id: string | number
@@ -14,6 +26,9 @@ type RowWithId = {
 
 type SchemaRow<TSchema extends StandardSchemaV1<unknown, RowWithId>> =
   InferSchemaOutput<TSchema>
+
+type SchemaInput<TSchema extends StandardSchemaV1<unknown, RowWithId>> =
+  InferSchemaInput<TSchema>
 
 export type ElectricMutationResult = {
   txid: Txid
@@ -45,6 +60,8 @@ export type CreateElectricCollectionConfig<
   TSchema extends StandardSchemaV1<unknown, RowWithId>,
 > = {
   id: string
+  shape?: string
+  scope?: ElectricCollectionScope
   schema: TSchema
   onInsert?: ElectricInsertHandler<TSchema>
   onUpdate?: ElectricUpdateHandler<TSchema>
@@ -52,12 +69,23 @@ export type CreateElectricCollectionConfig<
   url?: string
 }
 
-function getElectricShapeUrl(id: string, url?: string) {
+type ElectricCollectionWithMetadata<
+  TSchema extends StandardSchemaV1<unknown, RowWithId>,
+> = Collection<
+  SchemaRow<TSchema>,
+  string | number,
+  ElectricCollectionUtils<SchemaRow<TSchema>>,
+  TSchema,
+  SchemaInput<TSchema>
+> &
+  ElectricShapeMetadataCarrier
+
+function getElectricShapeUrl(id: string, shape?: string, url?: string) {
   if (url) {
     return url
   }
 
-  const path = `/api/electric/${id}`
+  const path = `/api/electric/${getElectricShapeName({ id, shape })}`
   return typeof window !== 'undefined' ? `${window.location.origin}${path}` : path
 }
 
@@ -65,6 +93,8 @@ export function createElectricCollection<
   TSchema extends StandardSchemaV1<unknown, RowWithId>,
 >({
   id,
+  shape,
+  scope,
   schema,
   onInsert,
   onUpdate,
@@ -78,7 +108,7 @@ export function createElectricCollection<
     schema,
     getKey: (row) => row.id,
     shapeOptions: {
-      url: getElectricShapeUrl(id, url),
+      url: getElectricShapeUrl(id, shape, url),
       liveSse: true,
       parser: {
         timestamptz: (value: string) => new Date(value),
@@ -116,7 +146,7 @@ export function createElectricCollection<
       : undefined,
   })
 
-  return createCollection(
+  const collection = createCollection(
     options as CollectionConfig<
       TRow,
       string | number,
@@ -125,5 +155,14 @@ export function createElectricCollection<
     > & {
       schema: TSchema
     },
-  )
+  ) as ElectricCollectionWithMetadata<TSchema>
+
+  collection.electric = {
+    shape: getElectricShapeName({ id, shape }),
+    scope,
+  }
+
+  registerElectricShapeDefinition(collection)
+
+  return collection
 }
