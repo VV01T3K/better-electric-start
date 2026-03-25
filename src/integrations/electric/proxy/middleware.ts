@@ -1,33 +1,33 @@
-import '@tanstack/react-start/server-only'
+import "@tanstack/react-start/server-only";
+import { createMiddleware } from "@tanstack/react-start";
 
-import { createMiddleware } from '@tanstack/react-start'
+import { getSessionFromHeaders } from "#/integrations/better-auth/session.server";
 
-import { getSessionFromHeaders } from '#/integrations/better-auth/session.server'
-import { authorizeElectricShapeRequest } from './shapes'
+import { authorizeElectricShapeRequest } from "./shapes";
 
 type ElectricRouteParams = {
-  shape?: string
-}
+	shape?: string;
+};
 
 export const electricProxyMiddleware = createMiddleware().server(
-  async (options) => {
-    const authorizationResult = await authorizeElectricShapeRequest({
-      shapeName: (
-        options as typeof options & {
-          params?: ElectricRouteParams
-        }
-      ).params?.shape,
-      getSession: () => getSessionFromHeaders(options.request.headers),
-    })
+	async (options) => {
+		const authorizationResult = await authorizeElectricShapeRequest({
+			shapeName: (
+				options as typeof options & {
+					params?: ElectricRouteParams;
+				}
+			).params?.shape,
+			getSession: () => getSessionFromHeaders(options.request.headers),
+		});
 
-    if (authorizationResult instanceof Response) {
-      return authorizationResult
-    }
+		if (authorizationResult instanceof Response) {
+			return authorizationResult;
+		}
 
-    return options.next({
-      context: {
-        electricProxy: authorizationResult,
-      },
-    })
-  },
-)
+		return options.next({
+			context: {
+				electricProxy: authorizationResult,
+			},
+		});
+	},
+);

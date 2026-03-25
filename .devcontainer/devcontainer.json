@@ -4,11 +4,7 @@
 	"service": "dev-app",
 	"workspaceFolder": "/workspaces/better-electric-start",
 	"shutdownAction": "stopCompose",
-	"forwardPorts": [
-		5432,
-		3001,
-		3000
-	],
+	"forwardPorts": [5432, 3001, 3000],
 	"customizations": {
 		"vscode": {
 			"extensions": [

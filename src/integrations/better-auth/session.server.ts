@@ -1,33 +1,32 @@
-import '@tanstack/react-start/server-only'
+import "@tanstack/react-start/server-only";
+import { getRequestHeaders } from "@tanstack/react-start/server";
 
-import { getRequestHeaders } from '@tanstack/react-start/server'
-
-import { auth } from '#/integrations/better-auth/config'
+import { auth } from "#/integrations/better-auth/config";
 
 export async function getSessionFromHeaders(headers: Headers) {
-  return auth.api.getSession({
-    headers,
-  })
+	return auth.api.getSession({
+		headers,
+	});
 }
 
 export async function requireSessionFromHeaders(headers: Headers) {
-  const session = await getSessionFromHeaders(headers)
+	const session = await getSessionFromHeaders(headers);
 
-  if (!session) {
-    throw new Error('Unauthorized')
-  }
+	if (!session) {
+		throw new Error("Unauthorized");
+	}
 
-  return session
+	return session;
 }
 
 export function getCurrentRequestHeaders() {
-  return new Headers(getRequestHeaders())
+	return new Headers(getRequestHeaders());
 }
 
 export async function getCurrentSession() {
-  return getSessionFromHeaders(getCurrentRequestHeaders())
+	return getSessionFromHeaders(getCurrentRequestHeaders());
 }
 
 export async function requireCurrentSession() {
-  return requireSessionFromHeaders(getCurrentRequestHeaders())
+	return requireSessionFromHeaders(getCurrentRequestHeaders());
 }

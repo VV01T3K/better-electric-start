@@ -1,45 +1,45 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+	--font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
-  --sea-ink: #173a40;
-  --sea-ink-soft: #416166;
-  --lagoon: #4fb8b2;
-  --lagoon-deep: #328f97;
-  --line: rgba(23, 58, 64, 0.14);
-  --bg-base: #f8faf9;
+	--sea-ink: #173a40;
+	--sea-ink-soft: #416166;
+	--lagoon: #4fb8b2;
+	--lagoon-deep: #328f97;
+	--line: rgba(23, 58, 64, 0.14);
+	--bg-base: #f8faf9;
 }
 
 * {
-  box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 html,
 body,
 #app {
-  min-height: 100%;
+	min-height: 100%;
 }
 
 body {
-  margin: 0;
-  color: var(--sea-ink);
-  font-family: var(--font-sans);
-  background-color: var(--bg-base);
+	margin: 0;
+	color: var(--sea-ink);
+	font-family: var(--font-sans);
+	background-color: var(--bg-base);
 }
 
 a {
-  color: var(--lagoon-deep);
-  text-decoration: none;
+	color: var(--lagoon-deep);
+	text-decoration: none;
 }
 
 a:hover {
-  color: var(--lagoon);
+	color: var(--lagoon);
 }
 
 .page-wrap {
-  width: min(1080px, calc(100% - 2rem));
-  margin-inline: auto;
+	width: min(1080px, calc(100% - 2rem));
+	margin-inline: auto;
 }

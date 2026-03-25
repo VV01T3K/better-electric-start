@@ -21,6 +21,7 @@ Each entity has two complementary definitions that must stay in sync:
 **Drizzle table** (`src/db/tables/todos.ts`, `src/db/tables/simple-list-items.ts`) — the authoritative PostgreSQL schema.
 
 **Zod schema** (`src/db/schemas/todos.ts`, `src/db/schemas/simple-list-items.ts`) — typed validation with split views:
+
 - `row` — full database row used by the collection and server mutations
 - `insert` / `update` / `delete` — narrowed shapes for server function input validators
 - `clientSchema` (public export) — the subset safe to expose to client forms
@@ -40,6 +41,7 @@ user-scoped    → valid session required + WHERE user_id = $1 injected
 ```
 
 This is declared **once at collection definition time**, not per-request. The scope resolves into an `ElectricShapeDefinition`:
+
 - `table` — derived from shape name by replacing `-` with `_` (convention over config)
 - `requiresAuth` — boolean gate
 - `buildMainFilter(session)` — optional function returning the parameterized `WHERE` clause
@@ -78,11 +80,13 @@ For `todos`, ownership is enforced in every write: `WHERE id = $1 AND user_id = 
 ### 5. The Proxy — Three Files
 
 **`src/integrations/electric/proxy/shapes.ts`** — pure authorization logic:
+
 - `authorizeElectricShapeRequest()` — looks up the shape name in the registered definitions, checks auth, returns an `AuthorizedElectricProxyContext` or a `Response` (401/404)
 - Accepts optional `shapeDefinitions` / `getShapeDefinitions` overrides for testing
 - Default path: lazy-imports `#/db/collections` to trigger self-registration, then reads the registry
 
 **`src/integrations/electric/proxy/handler.ts`** — HTTP proxying:
+
 - `createElectricProxyHandler()` — factory returning the actual request handler
 - `buildElectricShapeUrl()` — maps the inbound request's Electric protocol query params to the upstream Electric server URL, sets `table`, injects `where` + `params[N]` for user-scoped shapes, appends `source_id` and `secret` for Electric Cloud
 - Strips `content-encoding`, `content-length`, and CORS headers from the upstream response
@@ -90,6 +94,7 @@ For `todos`, ownership is enforced in every write: `WHERE id = $1 AND user_id = 
 - `disableBunRequestIdleTimeout()` — disables Bun's 10-second idle timeout for SSE long-poll connections via `server.timeout(request, 60)`
 
 **`src/integrations/electric/proxy/middleware.ts`** — TanStack Start middleware glue:
+
 - Reads `params.shape` from the route, calls `authorizeElectricShapeRequest` with `getSessionFromHeaders`
 - If authorization returns a `Response`, returns it immediately (short-circuits the route)
 - Otherwise injects `context.electricProxy` for the route handler to consume
@@ -147,13 +152,13 @@ Client mutates (e.g. insert todo)
 
 ## Key Decisions
 
-| Decision | Rationale |
-|---|---|
-| Self-registering collections via side-effect import | No central manifest to maintain; just import the collections file to activate all shapes |
-| Scope declared at definition, not request time | Shape access policy is colocated with the schema, not scattered across middleware |
-| `id` → table name via `-` → `_` convention | Eliminates a config layer; just name your collection `simple-list-items` and the table `simple_list_items` |
-| txid returned from every mutation | Required for Electric's optimistic reconciliation; must be read inside the same transaction |
-| `buildMainFilter` returns parameterized SQL | Prevents SQL injection in the `WHERE` clause for user-scoped shapes |
-| Proxy strips CORS headers | The proxy is same-origin; adding Electric's upstream CORS headers would be incorrect |
-| `Vary: Cookie` on auth-required shapes | Prevents CDN/reverse-proxy caches from serving one user's shape stream to another |
-| Bun timeout disabled per-request | Electric uses long-polling; Bun's idle timeout would kill connections after 10s |
+| Decision                                            | Rationale                                                                                                  |
+| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Self-registering collections via side-effect import | No central manifest to maintain; just import the collections file to activate all shapes                   |
+| Scope declared at definition, not request time      | Shape access policy is colocated with the schema, not scattered across middleware                          |
+| `id` → table name via `-` → `_` convention          | Eliminates a config layer; just name your collection `simple-list-items` and the table `simple_list_items` |
+| txid returned from every mutation                   | Required for Electric's optimistic reconciliation; must be read inside the same transaction                |
+| `buildMainFilter` returns parameterized SQL         | Prevents SQL injection in the `WHERE` clause for user-scoped shapes                                        |
+| Proxy strips CORS headers                           | The proxy is same-origin; adding Electric's upstream CORS headers would be incorrect                       |
+| `Vary: Cookie` on auth-required shapes              | Prevents CDN/reverse-proxy caches from serving one user's shape stream to another                          |
+| Bun timeout disabled per-request                    | Electric uses long-polling; Bun's idle timeout would kill connections after 10s                            |
