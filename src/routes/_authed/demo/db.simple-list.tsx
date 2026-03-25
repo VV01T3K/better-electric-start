@@ -4,7 +4,7 @@ import { ClientOnly, createFileRoute } from '@tanstack/react-router'
 
 import { simpleListItemClientSchema } from '#/db/schemas'
 import { getSimpleListItemCount } from '#/funcs/simple-list-items'
-import { demoSimpleListCollection } from './-db.simple-list.collection'
+import { demoSimpleListCollection } from '#/integrations/tanstack/db/-tmp.collections'
 
 export const Route = createFileRoute('/_authed/demo/db/simple-list')({
   loader: async () => ({

@@ -4,7 +4,7 @@ import { ClientOnly, createFileRoute } from '@tanstack/react-router'
 
 import { todoSchema } from '#/db/schemas'
 import { getTodoCount } from '#/funcs/todos'
-import { demoTodoCollection } from './-db.todos.collection'
+import { demoTodoCollection } from '#/integrations/tanstack/db/-tmp.collections'
 
 export const Route = createFileRoute('/_authed/demo/db/todos')({
   loader: async () => ({
