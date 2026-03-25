@@ -1,10 +1,46 @@
 {
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "extends": [
-    "./node_modules/ultracite/config/oxlint/core/.oxlintrc.json",
-    "./node_modules/ultracite/config/oxlint/react/.oxlintrc.json",
-    "./node_modules/ultracite/config/oxlint/remix/.oxlintrc.json",
-    "./node_modules/ultracite/config/oxlint/vitest/.oxlintrc.json"
-  ],
-  "ignorePatterns": ["env.d.ts", "src/**/*.gen.ts", "drizzle/**/snapshot.json"]
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"plugins": [
+		"react",
+		"react-perf",
+		"typescript",
+		"import",
+		"unicorn",
+		"jsx-a11y",
+		"vitest",
+		"promise",
+		"oxc"
+	],
+	"jsPlugins": ["@tanstack/eslint-plugin-query"],
+	"options": {
+		"typeAware": true,
+		"typeCheck": true
+	},
+	"rules": {
+		// TanStack Query recommended rules
+		"@tanstack/query/exhaustive-deps": "error",
+		"@tanstack/query/no-rest-destructuring": "warn",
+		"@tanstack/query/stable-query-client": "error",
+		"@tanstack/query/no-unstable-deps": "warn",
+		"@tanstack/query/infinite-query-property-order": "error",
+		// Error on deprecated API usage
+		"@typescript-eslint/no-deprecated": "error"
+	},
+	"settings": {
+		"jsx-a11y": {
+			"polymorphicPropName": "as"
+		},
+		"vitest": {
+			"typecheck": true
+		}
+	},
+	"ignorePatterns": [
+		"env.d.ts",
+		"**/*.gen.*",
+		"drizzle/**/snapshot.json",
+		"node_modules",
+		"dist",
+		".output",
+		"**/bun.lock"
+	]
 }
