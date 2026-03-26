@@ -1,5 +1,14 @@
 import { Link } from "@tanstack/react-router";
 
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from "#/components/ui/card";
+
 type AuthCardProps = {
 	title: string;
 	description: string;
@@ -18,28 +27,30 @@ export default function AuthCard({
 	children,
 }: AuthCardProps) {
 	return (
-		<main className="page-wrap px-4 py-12">
-			<section className="mx-auto max-w-md rounded-3xl border border-(--line) bg-white/80 p-8 shadow-sm">
-				<header className="mb-6 space-y-2">
-					<p className="text-sm tracking-[0.22em] text-(--sea-ink-soft) uppercase">
+		<main className="mx-auto max-w-5xl px-4 py-12">
+			<Card className="mx-auto max-w-md">
+				<CardHeader>
+					<p className="text-xs tracking-[0.22em] text-muted-foreground uppercase">
 						Better Auth
 					</p>
-					<h1 className="text-2xl font-bold text-(--sea-ink)">{title}</h1>
-					<p className="text-sm text-(--sea-ink-soft)">{description}</p>
-				</header>
+					<CardTitle className="text-2xl font-bold">{title}</CardTitle>
+					<CardDescription>{description}</CardDescription>
+				</CardHeader>
 
-				{children}
+				<CardContent>{children}</CardContent>
 
-				<p className="mt-6 text-sm text-(--sea-ink-soft)">
-					{footerText}{" "}
-					<Link
-						to={footerHref}
-						className="font-medium text-(--lagoon-deep) no-underline"
-					>
-						{footerLabel}
-					</Link>
-				</p>
-			</section>
+				<CardFooter>
+					<p className="text-sm text-muted-foreground">
+						{footerText}{" "}
+						<Link
+							to={footerHref}
+							className="font-medium text-primary no-underline"
+						>
+							{footerLabel}
+						</Link>
+					</p>
+				</CardFooter>
+			</Card>
 		</main>
 	);
 }

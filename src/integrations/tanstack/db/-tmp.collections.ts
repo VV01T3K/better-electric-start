@@ -1,6 +1,7 @@
 // * Temporary home for collections until TanStack DB supports SSR cleanly. * //
 
-import { simpleListItemServerSchema, todoServerSchema } from "#/db/schemas";
+import { simpleListItemServerSchema } from "#/db/schemas/simple-list-items";
+import { todoServerSchema } from "#/db/schemas/todos";
 import { insertSimpleListItem } from "#/funcs/simple-list-items";
 import { deleteTodo, insertTodo, updateTodo } from "#/funcs/todos";
 import { createElectricCollection } from "#/integrations/electric/collection";

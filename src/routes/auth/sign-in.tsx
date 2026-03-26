@@ -4,6 +4,8 @@ import { z } from "zod";
 
 import AuthCard from "#/components/AuthCard";
 import { authClient } from "#/integrations/better-auth/client";
+import { authSchema } from "#/integrations/better-auth/schemas";
+import { useAppForm } from "#/integrations/tanstack/form";
 
 const authSearchSchema = z.object({
 	redirect: z.string().optional(),
@@ -24,35 +26,38 @@ export const Route = createFileRoute("/auth/sign-in")({
 function SignInPage() {
 	const navigate = useNavigate();
 	const search = Route.useSearch();
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
-	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-	async function handleSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
-		event.preventDefault();
-		setIsSubmitting(true);
-		setErrorMessage(null);
+	const form = useAppForm({
+		defaultValues: {
+			email: "",
+			password: "",
+		},
+		validators: {
+			onChange: authSchema.signIn,
+			onSubmit: authSchema.signIn,
+		},
+		onSubmit: async ({ value }) => {
+			setErrorMessage(null);
 
-		const { error } = await authClient.signIn.email({
-			email,
-			password,
-		});
+			const { error } = await authClient.signIn.email({
+				email: value.email,
+				password: value.password,
+			});
 
-		setIsSubmitting(false);
+			if (error) {
+				setErrorMessage(error.message || "Unable to sign in.");
+				return;
+			}
 
-		if (error) {
-			setErrorMessage(error.message || "Unable to sign in.");
-			return;
-		}
+			if (search.redirect) {
+				window.location.assign(search.redirect);
+				return;
+			}
 
-		if (search.redirect) {
-			window.location.assign(search.redirect);
-			return;
-		}
-
-		await navigate({ to: "/demo/db/todos" });
-	}
+			await navigate({ to: "/demo/db/todos" });
+		},
+	});
 
 	return (
 		<AuthCard
@@ -63,45 +68,45 @@ function SignInPage() {
 			footerLabel="Create one"
 		>
 			<form
+				noValidate
 				className="space-y-4"
-				onSubmit={(event) => void handleSubmit(event)}
+				onSubmit={(e) => {
+					e.preventDefault();
+					e.stopPropagation();
+					void form.handleSubmit();
+				}}
 			>
-				<label className="block space-y-2 text-sm text-(--sea-ink)">
-					<span>Email</span>
-					<input
-						type="email"
-						autoComplete="email"
-						required
-						value={email}
-						onChange={(event) => setEmail(event.target.value)}
-						className="w-full rounded-2xl border border-(--line) px-3 py-2 transition outline-none focus:border-(--lagoon-deep)"
-					/>
-				</label>
+				<form.AppField name="email">
+					{(field) => (
+						<field.TextField
+							label="Email"
+							type="email"
+							autoComplete="email"
+						/>
+					)}
+				</form.AppField>
 
-				<label className="block space-y-2 text-sm text-(--sea-ink)">
-					<span>Password</span>
-					<input
-						type="password"
-						autoComplete="current-password"
-						required
-						minLength={8}
-						value={password}
-						onChange={(event) => setPassword(event.target.value)}
-						className="w-full rounded-2xl border border-(--line) px-3 py-2 transition outline-none focus:border-(--lagoon-deep)"
-					/>
-				</label>
+				<form.AppField name="password">
+					{(field) => (
+						<field.TextField
+							label="Password"
+							type="password"
+							autoComplete="current-password"
+						/>
+					)}
+				</form.AppField>
 
 				{errorMessage ? (
-					<p className="text-sm text-red-600">{errorMessage}</p>
+					<p className="text-sm text-destructive">{errorMessage}</p>
 				) : null}
 
-				<button
-					type="submit"
-					disabled={isSubmitting}
-					className="w-full rounded-2xl bg-(--lagoon-deep) px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-				>
-					{isSubmitting ? "Signing in..." : "Sign in"}
-				</button>
+				<form.AppForm>
+					<form.SubscribeButton
+						label="Sign in"
+						loadingLabel="Signing in..."
+						className="w-full"
+					/>
+				</form.AppForm>
 			</form>
 		</AuthCard>
 	);

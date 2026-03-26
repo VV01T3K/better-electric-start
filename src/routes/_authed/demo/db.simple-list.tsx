@@ -2,7 +2,9 @@ import { useLiveQuery } from "@tanstack/react-db";
 import { useForm } from "@tanstack/react-form";
 import { ClientOnly, createFileRoute } from "@tanstack/react-router";
 
-import { simpleListItemClientSchema } from "#/db/schemas";
+import { Button } from "#/components/ui/button";
+import { Input } from "#/components/ui/input";
+import { simpleListItemClientSchema } from "#/db/schemas/simple-list-items";
 import { getSimpleListItemCount } from "#/funcs/simple-list-items";
 import { demoSimpleListCollection } from "#/integrations/tanstack/db/-tmp.collections";
 
@@ -34,13 +36,13 @@ function SimpleListDemoPage() {
 	});
 
 	return (
-		<main className="page-wrap px-4 py-12">
+		<main className="mx-auto max-w-5xl px-4 py-12">
 			<section className="mx-auto max-w-2xl">
 				<header className="mb-6 space-y-2">
-					<h1 className="text-2xl font-bold text-(--sea-ink)">
+					<h1 className="text-2xl font-bold text-foreground">
 						Simple List
 					</h1>
-					<p className="text-sm text-(--sea-ink-soft)">
+					<p className="text-sm text-muted-foreground">
 						Add items with TanStack Form and watch the synced list update
 						live.
 					</p>
@@ -67,7 +69,7 @@ function SimpleListDemoPage() {
 									<label htmlFor={field.name} className="sr-only">
 										List item
 									</label>
-									<input
+									<Input
 										id={field.name}
 										name={field.name}
 										value={field.state.value}
@@ -77,10 +79,9 @@ function SimpleListDemoPage() {
 										}
 										placeholder="Add an item..."
 										aria-invalid={hasError}
-										className="w-full min-w-0 rounded border border-(--line) px-3 py-2 text-sm transition outline-none focus:border-(--lagoon-deep)"
 									/>
 									{hasError ? (
-										<p className="mt-2 text-sm text-red-600">
+										<p className="mt-2 text-sm text-destructive">
 											{typeof firstError === "string"
 												? firstError
 												: firstError?.message}
@@ -98,13 +99,13 @@ function SimpleListDemoPage() {
 						})}
 					>
 						{({ canSubmit, isSubmitting }) => (
-							<button
+							<Button
+								variant="outline"
 								type="submit"
 								disabled={!canSubmit || isSubmitting}
-								className="rounded border border-(--line) px-4 py-2 text-sm font-medium text-(--lagoon-deep) transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
 							>
 								{isSubmitting ? "Adding..." : "Add"}
-							</button>
+							</Button>
 						)}
 					</form.Subscribe>
 				</form>
@@ -134,12 +135,12 @@ function SimpleListClientList({ skeletonCount }: { skeletonCount: number }) {
 	return (
 		<div className="space-y-2">
 			{listItems.length === 0 ? (
-				<p className="text-sm text-(--sea-ink-soft)">No items yet.</p>
+				<p className="text-sm text-muted-foreground">No items yet.</p>
 			) : (
 				listItems.map((item) => (
 					<article
 						key={item.id}
-						className="rounded border border-(--line) px-3 py-2 text-sm text-(--sea-ink)"
+						className="rounded-md border border-border px-3 py-2 text-sm text-foreground"
 					>
 						{item.label}
 					</article>
@@ -151,7 +152,7 @@ function SimpleListClientList({ skeletonCount }: { skeletonCount: number }) {
 
 function SimpleListSkeleton({ count }: { count: number }) {
 	if (count === 0) {
-		return <p className="text-sm text-(--sea-ink-soft)">No items yet.</p>;
+		return <p className="text-sm text-muted-foreground">No items yet.</p>;
 	}
 
 	return (
@@ -160,9 +161,9 @@ function SimpleListSkeleton({ count }: { count: number }) {
 				<div
 					key={index}
 					aria-hidden="true"
-					className="rounded border border-(--line) px-3 py-2"
+					className="rounded-md border border-border px-3 py-2"
 				>
-					<div className="h-5 rounded bg-gray-100" />
+					<div className="h-5 rounded bg-muted" />
 				</div>
 			))}
 		</div>

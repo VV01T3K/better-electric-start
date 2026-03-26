@@ -2,7 +2,10 @@ import { useLiveQuery } from "@tanstack/react-db";
 import { useForm } from "@tanstack/react-form";
 import { ClientOnly, createFileRoute } from "@tanstack/react-router";
 
-import { todoSchema } from "#/db/schemas";
+import { Button } from "#/components/ui/button";
+import { Checkbox } from "#/components/ui/checkbox";
+import { Input } from "#/components/ui/input";
+import { todoSchema } from "#/db/schemas/todos";
 import { getTodoCount } from "#/funcs/todos";
 import { demoTodoCollection } from "#/integrations/tanstack/db/-tmp.collections";
 
@@ -37,13 +40,13 @@ function TodoDemoPage() {
 	});
 
 	return (
-		<main className="page-wrap px-4 py-12">
+		<main className="mx-auto max-w-5xl px-4 py-12">
 			<section className="mx-auto max-w-2xl">
 				<header className="mb-6 space-y-2">
-					<h1 className="text-2xl font-bold text-(--sea-ink)">
+					<h1 className="text-2xl font-bold text-foreground">
 						Synced Todos
 					</h1>
-					<p className="text-sm text-(--sea-ink-soft)">
+					<p className="text-sm text-muted-foreground">
 						Create todos with TanStack Form, then toggle and delete them
 						from the live Electric collection.
 					</p>
@@ -70,7 +73,7 @@ function TodoDemoPage() {
 									<label htmlFor={field.name} className="sr-only">
 										Todo text
 									</label>
-									<input
+									<Input
 										id={field.name}
 										name={field.name}
 										value={field.state.value}
@@ -80,10 +83,9 @@ function TodoDemoPage() {
 										}
 										placeholder="Add a todo..."
 										aria-invalid={hasError}
-										className="w-full min-w-0 rounded border border-(--line) px-3 py-2 text-sm transition outline-none focus:border-(--lagoon-deep)"
 									/>
 									{hasError ? (
-										<p className="mt-2 text-sm text-red-600">
+										<p className="mt-2 text-sm text-destructive">
 											{typeof firstError === "string"
 												? firstError
 												: firstError?.message}
@@ -101,13 +103,13 @@ function TodoDemoPage() {
 						})}
 					>
 						{({ canSubmit, isSubmitting }) => (
-							<button
+							<Button
+								variant="outline"
 								type="submit"
 								disabled={!canSubmit || isSubmitting}
-								className="rounded border border-(--line) px-4 py-2 text-sm font-medium text-(--lagoon-deep) transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
 							>
 								{isSubmitting ? "Adding..." : "Add"}
-							</button>
+							</Button>
 						)}
 					</form.Subscribe>
 				</form>
@@ -137,17 +139,16 @@ function TodoClientList({ skeletonCount }: { skeletonCount: number }) {
 	return (
 		<div className="space-y-2">
 			{todoItems.length === 0 ? (
-				<p className="text-sm text-(--sea-ink-soft)">No todos yet.</p>
+				<p className="text-sm text-muted-foreground">No todos yet.</p>
 			) : (
 				todoItems.map((todo) => (
 					<article
 						key={todo.id}
-						className="flex items-center gap-3 rounded border border-(--line) px-3 py-2"
+						className="flex items-center gap-3 rounded-md border border-border px-3 py-2"
 					>
-						<input
-							type="checkbox"
+						<Checkbox
 							checked={todo.completed}
-							onChange={() => {
+							onCheckedChange={() => {
 								demoTodoCollection.update(todo.id, (draft) => {
 									draft.completed = !draft.completed;
 								});
@@ -156,19 +157,19 @@ function TodoClientList({ skeletonCount }: { skeletonCount: number }) {
 						<span
 							className={`flex-1 text-sm ${
 								todo.completed
-									? "text-(--sea-ink-soft) line-through"
-									: "text-(--sea-ink)"
+									? "text-muted-foreground line-through"
+									: "text-foreground"
 							}`}
 						>
 							{todo.text}
 						</span>
-						<button
-							type="button"
+						<Button
+							variant="ghost"
+							size="xs"
 							onClick={() => demoTodoCollection.delete(todo.id)}
-							className="text-xs text-(--sea-ink-soft) transition hover:text-(--sea-ink)"
 						>
 							Delete
-						</button>
+						</Button>
 					</article>
 				))
 			)}
@@ -178,7 +179,7 @@ function TodoClientList({ skeletonCount }: { skeletonCount: number }) {
 
 function TodoListSkeleton({ count }: { count: number }) {
 	if (count === 0) {
-		return <p className="text-sm text-(--sea-ink-soft)">No todos yet.</p>;
+		return <p className="text-sm text-muted-foreground">No todos yet.</p>;
 	}
 
 	return (
@@ -187,11 +188,11 @@ function TodoListSkeleton({ count }: { count: number }) {
 				<div
 					key={index}
 					aria-hidden="true"
-					className="flex items-center gap-3 rounded border border-(--line) px-3 py-2"
+					className="flex items-center gap-3 rounded-md border border-border px-3 py-2"
 				>
-					<div className="size-3 rounded-sm border border-(--line)" />
-					<div className="h-5 flex-1 rounded bg-gray-100" />
-					<div className="h-5 w-12 rounded bg-gray-100" />
+					<div className="size-4 rounded-lg border border-input" />
+					<div className="h-5 flex-1 rounded bg-muted" />
+					<div className="h-5 w-12 rounded bg-muted" />
 				</div>
 			))}
 		</div>

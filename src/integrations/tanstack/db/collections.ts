@@ -1,4 +1,5 @@
-import { todoServerSchema, simpleListItemServerSchema } from "#/db/schemas";
+import { simpleListItemServerSchema } from "#/db/schemas/simple-list-items";
+import { todoServerSchema } from "#/db/schemas/todos";
 import { insertSimpleListItem } from "#/funcs/simple-list-items";
 import { insertTodo, deleteTodo, updateTodo } from "#/funcs/todos";
 import { createElectricCollection } from "#/integrations/electric/collection";

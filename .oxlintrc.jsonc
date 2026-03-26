@@ -27,6 +27,14 @@
 			"typecheck": true,
 		},
 	},
+	"overrides": [
+		{
+			"files": ["src/components/ui/label.tsx"],
+			"rules": {
+				"jsx-a11y/label-has-associated-control": "off",
+			},
+		},
+	],
 	"ignorePatterns": [
 		"env.d.ts",
 		"**/*.gen.*",
