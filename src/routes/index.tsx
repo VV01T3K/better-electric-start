@@ -15,8 +15,7 @@ import { cn } from "#/lib/utils";
 export const Route = createFileRoute("/")({ component: App });
 
 function App() {
-	const { data: session, isPending } = useSession();
-	const isSignedIn = Boolean(session?.user);
+	const { isAuthenticated, isPending, user } = useSession();
 
 	return (
 		<main className="mx-auto max-w-5xl px-4 py-12">
@@ -38,7 +37,7 @@ function App() {
 
 				<CardContent>
 					<div className="flex flex-wrap gap-3">
-						{isSignedIn ? (
+						{isAuthenticated ? (
 							<>
 								<Link
 									to="/demo/db/todos"
@@ -88,8 +87,8 @@ function App() {
 					<p className="text-sm text-muted-foreground">
 						{isPending
 							? "Checking your session..."
-							: isSignedIn
-								? `Signed in as ${session?.user.email}.`
+							: isAuthenticated
+								? `Signed in as ${user?.email}.`
 								: "Sign in to access the synced demo routes."}
 					</p>
 				</CardFooter>

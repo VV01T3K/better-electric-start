@@ -9,6 +9,7 @@ import {
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import { getSession } from "../integrations/better-auth/functions";
+import GlobalNavigationHotkeys from "../integrations/tanstack/hotkeys/GlobalNavigationHotkeys";
 import TanStackQueryProvider from "../integrations/tanstack/query/root-provider";
 
 import appCss from "../styles.css?url";
@@ -64,6 +65,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 function RootLayout() {
 	return (
 		<>
+			<GlobalNavigationHotkeys />
 			<Header />
 			<Outlet />
 			<Footer />
