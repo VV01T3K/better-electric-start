@@ -28,7 +28,7 @@ function AddressForm() {
 					fields: Record<string, string>;
 				};
 				if (value.fullName.trim().length === 0) {
-					errors.fields.fullName = "Full name is required";
+					errors.fields["fullName"] = "Full name is required";
 				}
 				return errors;
 			},
