@@ -16,6 +16,7 @@
 		"**/drizzle/**/snapshot.json": true
 	},
 	"editor.defaultFormatter": "oxc.oxc-vscode",
+	"js/ts.experimental.useTsgo": true,
 	"editor.formatOnPaste": true,
 	"editor.formatOnSave": true,
 	"emmet.showExpandedAbbreviation": "never",

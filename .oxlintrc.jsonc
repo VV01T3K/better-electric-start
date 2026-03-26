@@ -1,0 +1,39 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"plugins": [
+		"react",
+		"react-perf",
+		"typescript",
+		"import",
+		"unicorn",
+		"jsx-a11y",
+		"vitest",
+		"promise",
+		"oxc",
+	],
+	"options": {
+		"typeAware": true,
+		"typeCheck": true,
+	},
+	"rules": {
+		// Error on deprecated API usage
+		"@typescript-eslint/no-deprecated": "error",
+	},
+	"settings": {
+		"jsx-a11y": {
+			"polymorphicPropName": "as",
+		},
+		"vitest": {
+			"typecheck": true,
+		},
+	},
+	"ignorePatterns": [
+		"env.d.ts",
+		"**/*.gen.*",
+		"drizzle/**/snapshot.json",
+		"node_modules",
+		"dist",
+		".output",
+		"**/bun.lock",
+	],
+}
