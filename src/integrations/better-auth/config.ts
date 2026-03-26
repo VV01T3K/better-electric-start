@@ -24,6 +24,7 @@ export const auth = betterAuth({
 		joins: true,
 	},
 	baseURL: ENV.BETTER_AUTH_URL,
+	trustedOrigins: [ENV.BETTER_AUTH_URL, ENV.CADDY_PROXY_URL],
 	secret: ENV.BETTER_AUTH_SECRET,
 	emailAndPassword: {
 		enabled: true,
