@@ -1,6 +1,7 @@
 {
 	"$schema": "./node_modules/oxlint/configuration_schema.json",
 	"plugins": [
+		"eslint",
 		"react",
 		"react-perf",
 		"typescript",
@@ -11,6 +12,12 @@
 		"promise",
 		"oxc",
 	],
+	"jsPlugins": [
+		{
+			"name": "react-hooks-compiler",
+			"specifier": "eslint-plugin-react-hooks",
+		},
+	],
 	"options": {
 		"typeAware": true,
 		"typeCheck": true,
@@ -18,6 +25,12 @@
 	"rules": {
 		// Error on deprecated API usage
 		"@typescript-eslint/no-deprecated": "error",
+		"react/rules-of-hooks": "error",
+		"react/exhaustive-deps": "warn",
+		"react-hooks-compiler/purity": "error",
+		"react-hooks-compiler/refs": "error",
+		"react-hooks-compiler/immutability": "error",
+		"react-hooks-compiler/set-state-in-render": "error",
 	},
 	"settings": {
 		"jsx-a11y": {
