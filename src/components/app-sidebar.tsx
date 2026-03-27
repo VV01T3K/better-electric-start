@@ -28,7 +28,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 								render={<Link to="/" />}
 								tooltip="Electric Start"
 							>
-								<div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+								<div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
 									<Zap className="size-4" />
 								</div>
 								<div className="grid min-w-0 flex-1 text-left text-sm leading-tight">
