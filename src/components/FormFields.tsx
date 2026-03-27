@@ -51,30 +51,51 @@ export function TextField({
 	placeholder,
 	type,
 	autoComplete,
+	inline,
+	children,
 }: {
 	label: string;
 	placeholder?: string;
 	type?: React.HTMLInputTypeAttribute;
 	autoComplete?: string;
+	inline?: boolean;
+	children?: React.ReactNode;
 }) {
 	const field = useFieldContext<string>();
 	const errors = useStore(field.store, (state) => state.meta.errors);
 	const hasError = field.state.meta.isTouched && errors.length > 0;
 
+	const input = (
+		<Input
+			id={field.name}
+			name={field.name}
+			type={type}
+			autoComplete={autoComplete}
+			value={field.state.value}
+			placeholder={placeholder}
+			onBlur={field.handleBlur}
+			onChange={(e) => field.handleChange(e.target.value)}
+			aria-invalid={hasError || undefined}
+			className={inline ? "flex-1" : undefined}
+		/>
+	);
+
 	return (
 		<Field data-invalid={hasError || undefined}>
-			<FieldLabel htmlFor={field.name}>{label}</FieldLabel>
-			<Input
-				id={field.name}
-				name={field.name}
-				type={type}
-				autoComplete={autoComplete}
-				value={field.state.value}
-				placeholder={placeholder}
-				onBlur={field.handleBlur}
-				onChange={(e) => field.handleChange(e.target.value)}
-				aria-invalid={hasError || undefined}
-			/>
+			<FieldLabel
+				htmlFor={field.name}
+				className={inline ? "sr-only" : undefined}
+			>
+				{label}
+			</FieldLabel>
+			{inline ? (
+				<div className="flex items-center gap-2">
+					{input}
+					{children}
+				</div>
+			) : (
+				input
+			)}
 			<FieldError errors={hasError ? normalizeErrors(errors) : undefined} />
 		</Field>
 	);

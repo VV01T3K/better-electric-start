@@ -1,14 +1,21 @@
 import { useLiveQuery } from "@tanstack/react-db";
-import { useForm } from "@tanstack/react-form";
 import { ClientOnly, createFileRoute } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
 
 import { Button } from "#/components/ui/button";
-import { Input } from "#/components/ui/input";
+import {
+	Empty,
+	EmptyDescription,
+	EmptyHeader,
+	EmptyTitle,
+} from "#/components/ui/empty";
+import { Item, ItemContent, ItemGroup, ItemTitle } from "#/components/ui/item";
 import { Separator } from "#/components/ui/separator";
+import { Skeleton } from "#/components/ui/skeleton";
 import { simpleListItemClientSchema } from "#/db/schemas/simple-list-items";
 import { getSimpleListItemCount } from "#/funcs/simple-list-items";
 import { demoSimpleListCollection } from "#/integrations/tanstack/db/-tmp.collections";
+import { useAppForm } from "#/integrations/tanstack/form";
 
 export const Route = createFileRoute("/_authed/demo/db/simple-list")({
 	loader: async () => ({
@@ -19,7 +26,7 @@ export const Route = createFileRoute("/_authed/demo/db/simple-list")({
 
 function SimpleListDemoPage() {
 	const { skeletonCount } = Route.useLoaderData();
-	const form = useForm({
+	const form = useAppForm({
 		defaultValues: {
 			label: "",
 		},
@@ -62,63 +69,36 @@ function SimpleListDemoPage() {
 						void form.handleSubmit();
 					}}
 				>
-					<form.Field name="label">
-						{(field) => {
-							const errors = field.state.meta.errors;
-							const hasError =
-								field.state.meta.isTouched && errors.length > 0;
-							const firstError = errors[0];
-
-							return (
-								<div className="space-y-2">
-									<div className="flex items-center gap-2">
-										<label htmlFor={field.name} className="sr-only">
-											List item
-										</label>
-										<Input
-											id={field.name}
-											name={field.name}
-											value={field.state.value}
-											onBlur={field.handleBlur}
-											onChange={(event) =>
-												field.handleChange(event.target.value)
-											}
-											placeholder="Add an item..."
-											aria-invalid={hasError}
-											className="flex-1"
-										/>
-										<form.Subscribe
-											selector={(state) => ({
-												canSubmit: state.canSubmit,
-												isSubmitting: state.isSubmitting,
-											})}
+					<form.AppField name="label">
+						{(field) => (
+							<field.TextField
+								label="List item"
+								placeholder="Add an item..."
+								inline
+							>
+								<form.Subscribe
+									selector={(state) => ({
+										canSubmit: state.canSubmit,
+										isSubmitting: state.isSubmitting,
+									})}
+								>
+									{({ canSubmit, isSubmitting }) => (
+										<Button
+											variant="default"
+											size="default"
+											type="submit"
+											disabled={!canSubmit || isSubmitting}
 										>
-											{({ canSubmit, isSubmitting }) => (
-												<Button
-													variant="default"
-													size="default"
-													type="submit"
-													disabled={!canSubmit || isSubmitting}
-												>
-													<Plus className="size-3.5" />
-													<span>
-														{isSubmitting ? "Adding..." : "Add"}
-													</span>
-												</Button>
-											)}
-										</form.Subscribe>
-									</div>
-									{hasError ? (
-										<p className="text-xs text-destructive">
-											{typeof firstError === "string"
-												? firstError
-												: firstError?.message}
-										</p>
-									) : null}
-								</div>
-							);
-						}}
-					</form.Field>
+											<Plus className="size-3.5" />
+											<span>
+												{isSubmitting ? "Adding..." : "Add"}
+											</span>
+										</Button>
+									)}
+								</form.Subscribe>
+							</field.TextField>
+						)}
+					</form.AppField>
 				</form>
 
 				<Separator className="mb-6" />
@@ -147,28 +127,36 @@ function SimpleListClientList({ skeletonCount }: { skeletonCount: number }) {
 
 	if (listItems.length === 0) {
 		return (
-			<div className="animate-fade-in flex flex-col items-center py-12 text-center">
-				<p className="text-sm text-muted-foreground">No items yet.</p>
-				<p className="mt-1 text-xs text-muted-foreground/60">
-					Add one above to get started.
-				</p>
-			</div>
+			<Empty className="animate-fade-in py-12">
+				<EmptyHeader>
+					<EmptyTitle>No items yet</EmptyTitle>
+					<EmptyDescription>
+						Add one above to get started.
+					</EmptyDescription>
+				</EmptyHeader>
+			</Empty>
 		);
 	}
 
 	return (
-		<div className="animate-fade-in space-y-1.5">
+		<div className="animate-fade-in">
 			<p className="mb-3 font-mono text-[10px] tracking-wider text-muted-foreground/60 uppercase">
 				{listItems.length} {listItems.length === 1 ? "item" : "items"}
 			</p>
-			{listItems.map((item) => (
-				<div
-					key={item.id}
-					className="rounded-lg border border-border/50 bg-card/50 px-3.5 py-2.5 text-sm text-foreground transition-colors hover:bg-card"
-				>
-					{item.label}
-				</div>
-			))}
+			<ItemGroup>
+				{listItems.map((item) => (
+					<Item
+						key={item.id}
+						variant="outline"
+						size="sm"
+						className="border-border/50"
+					>
+						<ItemContent>
+							<ItemTitle>{item.label}</ItemTitle>
+						</ItemContent>
+					</Item>
+				))}
+			</ItemGroup>
 		</div>
 	);
 }
@@ -176,27 +164,35 @@ function SimpleListClientList({ skeletonCount }: { skeletonCount: number }) {
 function SimpleListSkeleton({ count }: { count: number }) {
 	if (count === 0) {
 		return (
-			<div className="flex flex-col items-center py-12 text-center">
-				<p className="text-sm text-muted-foreground">No items yet.</p>
-				<p className="mt-1 text-xs text-muted-foreground/60">
-					Add one above to get started.
-				</p>
-			</div>
+			<Empty className="py-12">
+				<EmptyHeader>
+					<EmptyTitle>No items yet</EmptyTitle>
+					<EmptyDescription>
+						Add one above to get started.
+					</EmptyDescription>
+				</EmptyHeader>
+			</Empty>
 		);
 	}
 
 	return (
-		<div className="animate-pulse-subtle space-y-1.5">
-			<div className="mb-3 h-3 w-12 rounded bg-muted" />
-			{Array.from({ length: count }, (_, index) => (
-				<div
-					key={index}
-					aria-hidden="true"
-					className="rounded-lg border border-border/50 bg-card/50 px-3.5 py-2.5"
-				>
-					<div className="h-5 rounded bg-muted" />
-				</div>
-			))}
+		<div className="animate-pulse-subtle">
+			<Skeleton className="mb-3 h-3 w-12" />
+			<ItemGroup>
+				{Array.from({ length: count }, (_, index) => (
+					<Item
+						key={index}
+						variant="outline"
+						size="sm"
+						className="border-border/50"
+						aria-hidden="true"
+					>
+						<ItemContent>
+							<Skeleton className="h-5 w-full" />
+						</ItemContent>
+					</Item>
+				))}
+			</ItemGroup>
 		</div>
 	);
 }
