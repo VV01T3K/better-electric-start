@@ -45,8 +45,8 @@ function SimpleListDemoPage() {
 	});
 
 	return (
-		<main className="mx-auto max-w-5xl px-5 py-12 sm:py-16">
-			<section className="mx-auto max-w-xl">
+		<main className="mx-auto w-full max-w-3xl px-5 py-12 sm:py-16">
+			<section className="mx-auto w-full max-w-3xl">
 				<header className="animate-fade-up mb-8">
 					<p className="font-mono text-[11px] tracking-widest text-primary uppercase">
 						Shared collection
