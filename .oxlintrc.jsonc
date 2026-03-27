@@ -47,6 +47,17 @@
 				"jsx-a11y/label-has-associated-control": "off",
 			},
 		},
+		{
+			"files": [
+				"src/components/nav-projects.tsx",
+				"src/components/ui/pagination.tsx",
+			],
+			"rules": {
+				// Base UI render props clone the <a> and merge children from the parent
+				// component, but oxlint only sees the empty inline anchor literal.
+				"jsx-a11y/anchor-has-content": "off",
+			},
+		},
 	],
 	"ignorePatterns": [
 		"env.d.ts",

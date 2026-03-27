@@ -14,4 +14,3 @@ export function isResolvedAppTheme(
 ): theme is ResolvedAppTheme {
 	return theme === "light" || theme === "dark";
 }
-
