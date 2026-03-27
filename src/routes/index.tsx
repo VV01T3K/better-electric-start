@@ -40,7 +40,7 @@ function App() {
 	const { isAuthenticated, isPending, user } = useSession();
 
 	return (
-		<main className="mx-auto max-w-5xl px-5 py-16 sm:py-24">
+		<main className="mx-auto max-w-4xl py-10 sm:py-16">
 			{/* Hero */}
 			<div className="animate-fade-up max-w-2xl">
 				<p className="font-mono text-[11px] tracking-widest text-primary uppercase">

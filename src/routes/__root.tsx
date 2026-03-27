@@ -4,10 +4,26 @@ import {
 	Outlet,
 	Scripts,
 	createRootRouteWithContext,
+	useLocation,
 } from "@tanstack/react-router";
+import React from "react";
 
-import Footer from "../components/Footer";
-import Header from "../components/Header";
+import { AppSidebar } from "../components/app-sidebar";
+import ThemeToggle from "../components/ThemeToggle";
+import {
+	Breadcrumb,
+	BreadcrumbItem,
+	BreadcrumbList,
+	BreadcrumbPage,
+	BreadcrumbSeparator,
+} from "../components/ui/breadcrumb";
+import { Separator } from "../components/ui/separator";
+import {
+	SidebarInset,
+	SidebarProvider,
+	SidebarTrigger,
+} from "../components/ui/sidebar";
+import { TooltipProvider } from "../components/ui/tooltip";
 import { getSession } from "../integrations/better-auth/functions";
 import GlobalNavigationHotkeys from "../integrations/tanstack/hotkeys/GlobalNavigationHotkeys";
 import TanStackQueryProvider from "../integrations/tanstack/query/root-provider";
@@ -60,22 +76,93 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<HeadContent />
 			</head>
 			<body className="font-sans antialiased">
-				<TanStackQueryProvider>{children}</TanStackQueryProvider>
+				<TanStackQueryProvider>
+					<TooltipProvider>{children}</TooltipProvider>
+				</TanStackQueryProvider>
 				<Scripts />
 			</body>
 		</html>
 	);
 }
 
+const breadcrumbLabels: Record<string, string> = {
+	demo: "Demos",
+	db: "Database",
+	todos: "Todos",
+	"simple-list": "Simple List",
+	form: "Forms",
+	address: "Address",
+	auth: "Auth",
+	"sign-in": "Sign In",
+	"sign-up": "Sign Up",
+};
+
+function DynamicBreadcrumbs() {
+	const { pathname } = useLocation();
+	const segments = pathname.split("/").filter(Boolean);
+
+	if (segments.length === 0) {
+		return (
+			<Breadcrumb>
+				<BreadcrumbList>
+					<BreadcrumbItem>
+						<BreadcrumbPage>Home</BreadcrumbPage>
+					</BreadcrumbItem>
+				</BreadcrumbList>
+			</Breadcrumb>
+		);
+	}
+
+	return (
+		<Breadcrumb>
+			<BreadcrumbList>
+				{segments.map((segment, index) => {
+					const isLast = index === segments.length - 1;
+					const label =
+						breadcrumbLabels[segment] ||
+						segment.charAt(0).toUpperCase() + segment.slice(1);
+
+					return (
+						<React.Fragment key={`${segment}-${index}`}>
+							{index > 0 && (
+								<BreadcrumbSeparator className="hidden md:block" />
+							)}
+							<BreadcrumbItem
+								className={!isLast ? "hidden md:block" : ""}
+							>
+								<BreadcrumbPage>{label}</BreadcrumbPage>
+							</BreadcrumbItem>
+						</React.Fragment>
+					);
+				})}
+			</BreadcrumbList>
+		</Breadcrumb>
+	);
+}
+
 function RootLayout() {
 	return (
-		<div className="flex min-h-screen flex-col">
+		<SidebarProvider>
+			<AppSidebar />
+			<SidebarInset>
+				<header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+					<div className="flex items-center gap-2 px-4">
+						<SidebarTrigger className="-ml-1" />
+						<Separator
+							orientation="vertical"
+							className="mr-2 data-vertical:h-4!"
+						/>
+						<DynamicBreadcrumbs />
+					</div>
+					<div className="ml-auto flex items-center gap-2 px-4">
+						<ThemeToggle />
+					</div>
+				</header>
+				<div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+					<Outlet />
+				</div>
+			</SidebarInset>
 			<GlobalNavigationHotkeys />
-			<Header />
-			<div className="flex-1">
-				<Outlet />
-			</div>
-			<Footer />
-		</div>
+		</SidebarProvider>
 	);
 }
