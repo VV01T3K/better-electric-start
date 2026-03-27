@@ -2,6 +2,8 @@
 
 Only for running manually by agent and not for user prompts nor scripts, only agents integrated terminal.
 bun via mise exec -- bun ....
+btca also via mise exec -- btca
+if you cant access something look if its in mise.toml
 
 Do not read archive folder unless explicitly asked for, as they may contain outdated information.
 

@@ -8,6 +8,7 @@ VARLOCK_TELEMETRY_DISABLED = true
 node = "latest"
 bun = "latest"
 "npm:varlock" = "latest"
+"npm:btca" = "latest"
 # "npm:turbo" = "latest"
 
 # [hooks]
