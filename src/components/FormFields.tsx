@@ -1,16 +1,28 @@
 import { useStore } from "@tanstack/react-form";
 
 import { Button } from "#/components/ui/button";
+import { Field, FieldError, FieldLabel } from "#/components/ui/field";
 import { Input } from "#/components/ui/input";
-import { Label } from "#/components/ui/label";
+import {
+	Select as SelectInput,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "#/components/ui/select";
 import { Textarea } from "#/components/ui/textarea";
 import {
 	useFieldContext,
 	useFormContext,
 } from "#/integrations/tanstack/form/context";
 
-function formatError(error: string | { message: string }): string {
-	return typeof error === "string" ? error : error.message;
+function normalizeErrors(
+	errors: Array<string | { message: string }>,
+): Array<{ message?: string }> {
+	return errors.map((error) =>
+		typeof error === "string" ? { message: error } : error,
+	);
 }
 
 export function SubscribeButton({
@@ -50,24 +62,21 @@ export function TextField({
 	const hasError = field.state.meta.isTouched && errors.length > 0;
 
 	return (
-		<div className="space-y-1.5">
-			<Label htmlFor={field.name} className="text-xs font-medium">
-				{label}
-			</Label>
+		<Field data-invalid={hasError || undefined}>
+			<FieldLabel htmlFor={field.name}>{label}</FieldLabel>
 			<Input
 				id={field.name}
+				name={field.name}
 				type={type}
 				autoComplete={autoComplete}
 				value={field.state.value}
 				placeholder={placeholder}
 				onBlur={field.handleBlur}
 				onChange={(e) => field.handleChange(e.target.value)}
-				aria-invalid={hasError}
+				aria-invalid={hasError || undefined}
 			/>
-			{hasError && (
-				<p className="text-xs text-destructive">{formatError(errors[0])}</p>
-			)}
-		</div>
+			<FieldError errors={hasError ? normalizeErrors(errors) : undefined} />
+		</Field>
 	);
 }
 
@@ -83,28 +92,26 @@ export function TextArea({
 	const hasError = field.state.meta.isTouched && errors.length > 0;
 
 	return (
-		<div className="space-y-1.5">
-			<Label htmlFor={field.name} className="text-xs font-medium">
-				{label}
-			</Label>
+		<Field data-invalid={hasError || undefined}>
+			<FieldLabel htmlFor={field.name}>{label}</FieldLabel>
 			<Textarea
 				id={field.name}
+				name={field.name}
 				value={field.state.value}
 				rows={rows}
 				onBlur={field.handleBlur}
 				onChange={(e) => field.handleChange(e.target.value)}
-				aria-invalid={hasError}
+				aria-invalid={hasError || undefined}
 			/>
-			{hasError && (
-				<p className="text-xs text-destructive">{formatError(errors[0])}</p>
-			)}
-		</div>
+			<FieldError errors={hasError ? normalizeErrors(errors) : undefined} />
+		</Field>
 	);
 }
 
 export function Select({
 	label,
 	values,
+	placeholder = "Select an option",
 }: {
 	label: string;
 	values: Array<{ label: string; value: string }>;
@@ -115,28 +122,33 @@ export function Select({
 	const hasError = field.state.meta.isTouched && errors.length > 0;
 
 	return (
-		<div className="space-y-1.5">
-			<Label htmlFor={field.name} className="text-xs font-medium">
-				{label}
-			</Label>
-			<select
+		<Field data-invalid={hasError || undefined}>
+			<FieldLabel htmlFor={field.name}>{label}</FieldLabel>
+			<SelectInput
 				id={field.name}
 				name={field.name}
+				modal={false}
 				value={field.state.value}
-				onBlur={field.handleBlur}
-				onChange={(e) => field.handleChange(e.target.value)}
-				aria-invalid={hasError}
-				className="flex h-9 w-full rounded-md border border-input bg-input/20 px-3 py-1 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 dark:bg-input/30"
+				onValueChange={(value) => field.handleChange(value ?? "")}
 			>
-				{values.map((value) => (
-					<option key={value.value} value={value.value}>
-						{value.label}
-					</option>
-				))}
-			</select>
-			{hasError && (
-				<p className="text-xs text-destructive">{formatError(errors[0])}</p>
-			)}
-		</div>
+				<SelectTrigger
+					aria-invalid={hasError || undefined}
+					onBlur={field.handleBlur}
+					className="w-full justify-between"
+				>
+					<SelectValue placeholder={placeholder} />
+				</SelectTrigger>
+				<SelectContent alignItemWithTrigger={false}>
+					<SelectGroup>
+						{values.map((value) => (
+							<SelectItem key={value.value} value={value.value}>
+								{value.label}
+							</SelectItem>
+						))}
+					</SelectGroup>
+				</SelectContent>
+			</SelectInput>
+			<FieldError errors={hasError ? normalizeErrors(errors) : undefined} />
+		</Field>
 	);
 }
