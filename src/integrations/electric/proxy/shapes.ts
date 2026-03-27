@@ -37,13 +37,8 @@ function createProxyErrorResponse(
 export async function authorizeElectricShapeRequest(options: {
 	shapeName: string | undefined;
 	getSession: () => Promise<ElectricProxySession | null | undefined>;
-	shapeDefinitions?: Record<string, ElectricShapeDefinition>;
-	getShapeDefinitions?: () => Promise<Record<string, ElectricShapeDefinition>>;
 }) {
-	const shapeDefinitions =
-		options.shapeDefinitions ??
-		(await (options.getShapeDefinitions?.() ??
-			getElectricShapeDefinitions()));
+	const shapeDefinitions = await getElectricShapeDefinitions();
 
 	const shape = options.shapeName
 		? shapeDefinitions[options.shapeName]

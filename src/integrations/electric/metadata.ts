@@ -76,38 +76,6 @@ function resolveElectricShapeDefinition(
 	}
 }
 
-export function defineElectricShapeDefinitions(
-	collections: Iterable<ElectricShapeMetadataCarrier>,
-) {
-	const definitions = new Map<string, ElectricShapeDefinition>();
-	const owners = new Map<string, string>();
-
-	for (const collection of collections) {
-		const { shape, scope } = collection.electric;
-
-		if (!scope) {
-			continue;
-		}
-
-		if (definitions.has(shape)) {
-			const previousOwner = owners.get(shape) ?? "unknown collection";
-			const currentOwner = collection.id ?? "unknown collection";
-
-			throw new Error(
-				`Duplicate Electric shape "${shape}" registered by "${currentOwner}". Already registered by "${previousOwner}".`,
-			);
-		}
-
-		definitions.set(shape, resolveElectricShapeDefinition(shape, scope));
-		owners.set(shape, collection.id ?? shape);
-	}
-
-	return Object.fromEntries(definitions) as Record<
-		string,
-		ElectricShapeDefinition
-	>;
-}
-
 export function registerElectricShapeDefinition(
 	collection: ElectricShapeMetadataCarrier,
 ) {

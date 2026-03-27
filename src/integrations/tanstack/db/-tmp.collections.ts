@@ -6,31 +6,13 @@ import { insertSimpleListItem } from "#/funcs/simple-list-items";
 import { deleteTodo, insertTodo, updateTodo } from "#/funcs/todos";
 import { createElectricCollection } from "#/integrations/electric/collection";
 
-function getDemoTodoCollectionUrl() {
-	const path = "/api/electric/todos";
+function getDemoCollectionUrl(shapeName: string) {
+	const path = `/api/electric/${shapeName}`;
 
 	if (typeof window === "undefined") {
 		return path;
 	}
-
 	const url = new URL(path, window.location.origin);
-
-	// Temporary refresh workaround for this route only. Easy to delete later.
-	url.searchParams.set("demo-refresh", String(Date.now()));
-
-	return url.toString();
-}
-
-function getDemoSimpleListCollectionUrl() {
-	const path = "/api/electric/simple-list-items";
-
-	if (typeof window === "undefined") {
-		return path;
-	}
-
-	const url = new URL(path, window.location.origin);
-
-	// Temporary refresh workaround for this route only. Easy to delete later.
 	url.searchParams.set("demo-refresh", String(Date.now()));
 
 	return url.toString();
@@ -42,7 +24,7 @@ export const demoTodoCollection = createElectricCollection({
 	onInsert: insertTodo,
 	onUpdate: updateTodo,
 	onDelete: deleteTodo,
-	url: getDemoTodoCollectionUrl(),
+	url: getDemoCollectionUrl("todos"),
 });
 
 export const demoTodoCollectionPreloadPromise =
@@ -52,11 +34,8 @@ export const demoSimpleListCollection = createElectricCollection({
 	id: "simple-list-demo-route",
 	schema: simpleListItemServerSchema.row,
 	onInsert: insertSimpleListItem,
-	url: getDemoSimpleListCollectionUrl(),
+	url: getDemoCollectionUrl("simple-list-items"),
 });
 
 export const demoSimpleListCollectionPreloadPromise =
 	typeof window === "undefined" ? null : demoSimpleListCollection.preload();
-
-void demoTodoCollectionPreloadPromise;
-void demoSimpleListCollectionPreloadPromise;
