@@ -21,21 +21,14 @@ export type ElectricShapeDefinition = {
 };
 
 export type ElectricCollectionMetadata = {
+	id: string;
 	shape: string;
 	scope?: ElectricCollectionScope;
 };
 
 export type ElectricShapeMetadataCarrier = {
-	id?: string;
 	electric: ElectricCollectionMetadata;
 };
-
-type RegisteredElectricShape = {
-	owner: string;
-	definition: ElectricShapeDefinition;
-};
-
-const registeredElectricShapes = new Map<string, RegisteredElectricShape>();
 
 export function getElectricShapeName(options: { id: string; shape?: string }) {
 	return options.shape ?? options.id;
@@ -45,23 +38,28 @@ function shapeNameToTable(shapeName: string) {
 	return shapeName.replaceAll("-", "_");
 }
 
-function resolveElectricShapeDefinition(
-	shapeName: string,
-	scope: ElectricCollectionScope,
-): ElectricShapeDefinition {
-	const table = shapeNameToTable(shapeName);
+export function getElectricShapeDefinition(options: {
+	id: string;
+	shape?: string;
+	scope?: ElectricCollectionScope;
+}) {
+	if (!options.scope) {
+		return undefined;
+	}
 
-	switch (scope) {
+	const table = shapeNameToTable(getElectricShapeName(options));
+
+	switch (options.scope) {
 		case "public":
 			return {
 				table,
 				requiresAuth: false,
-			};
+			} satisfies ElectricShapeDefinition;
 		case "authenticated":
 			return {
 				table,
 				requiresAuth: true,
-			};
+			} satisfies ElectricShapeDefinition;
 		case "user-scoped":
 			return {
 				table,
@@ -72,40 +70,24 @@ function resolveElectricShapeDefinition(
 						1: session.user.id,
 					},
 				}),
-			};
+			} satisfies ElectricShapeDefinition;
 	}
 }
 
-export function registerElectricShapeDefinition(
-	collection: ElectricShapeMetadataCarrier,
-) {
-	const { shape, scope } = collection.electric;
-
-	if (!scope) {
-		return;
+export function isElectricShapeMetadataCarrier(
+	value: unknown,
+): value is ElectricShapeMetadataCarrier {
+	if (typeof value !== "object" || value === null) {
+		return false;
 	}
 
-	const owner = collection.id ?? shape;
-	const definition = resolveElectricShapeDefinition(shape, scope);
-	const existing = registeredElectricShapes.get(shape);
+	const electric = (value as { electric?: ElectricCollectionMetadata })
+		.electric;
 
-	if (existing && existing.owner !== owner) {
-		throw new Error(
-			`Duplicate Electric shape "${shape}" registered by "${owner}". Already registered by "${existing.owner}".`,
-		);
-	}
-
-	registeredElectricShapes.set(shape, {
-		owner,
-		definition,
-	});
-}
-
-export function getRegisteredElectricShapeDefinitions() {
-	return Object.fromEntries(
-		Array.from(registeredElectricShapes, ([shape, entry]) => [
-			shape,
-			entry.definition,
-		]),
-	) as Record<string, ElectricShapeDefinition>;
+	return (
+		typeof electric?.id === "string" &&
+		typeof electric.shape === "string" &&
+		(typeof electric.scope === "string" ||
+			typeof electric.scope === "undefined")
+	);
 }

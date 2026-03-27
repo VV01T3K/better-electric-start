@@ -4,21 +4,37 @@ export type {
 	ElectricShapeMainFilter,
 } from "../metadata";
 
+import * as collections from "#/integrations/tanstack/db/collections";
+
 import type {
 	ElectricProxySession,
 	ElectricShapeDefinition,
 } from "../metadata";
-import { getRegisteredElectricShapeDefinitions } from "../metadata";
+import {
+	getElectricShapeDefinition,
+	isElectricShapeMetadataCarrier,
+} from "../metadata";
 
 export type AuthorizedElectricProxyContext = {
 	shape: ElectricShapeDefinition;
 	session?: ElectricProxySession;
 };
 
-async function getElectricShapeDefinitions() {
-	await import("#/integrations/tanstack/db/collections");
-	return getRegisteredElectricShapeDefinitions();
-}
+const electricShapeDefinitions = Object.fromEntries(
+	Object.values(collections).flatMap((value) => {
+		if (!isElectricShapeMetadataCarrier(value)) {
+			return [];
+		}
+
+		const definition = getElectricShapeDefinition(value.electric);
+
+		if (!definition) {
+			return [];
+		}
+
+		return [[value.electric.shape, definition]] as const;
+	}),
+) as Record<string, ElectricShapeDefinition>;
 
 function createProxyErrorResponse(
 	status: 401 | 404,
@@ -38,10 +54,8 @@ export async function authorizeElectricShapeRequest(options: {
 	shapeName: string | undefined;
 	getSession: () => Promise<ElectricProxySession | null | undefined>;
 }) {
-	const shapeDefinitions = await getElectricShapeDefinitions();
-
 	const shape = options.shapeName
-		? shapeDefinitions[options.shapeName]
+		? electricShapeDefinitions[options.shapeName]
 		: undefined;
 
 	if (!shape) {
