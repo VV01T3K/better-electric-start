@@ -50,8 +50,10 @@ export function TextField({
 	const hasError = field.state.meta.isTouched && errors.length > 0;
 
 	return (
-		<div className="space-y-2">
-			<Label htmlFor={field.name}>{label}</Label>
+		<div className="space-y-1.5">
+			<Label htmlFor={field.name} className="text-xs font-medium">
+				{label}
+			</Label>
 			<Input
 				id={field.name}
 				type={type}
@@ -63,9 +65,7 @@ export function TextField({
 				aria-invalid={hasError}
 			/>
 			{hasError && (
-				<p className="text-sm font-medium text-destructive">
-					{formatError(errors[0])}
-				</p>
+				<p className="text-xs text-destructive">{formatError(errors[0])}</p>
 			)}
 		</div>
 	);
@@ -83,8 +83,10 @@ export function TextArea({
 	const hasError = field.state.meta.isTouched && errors.length > 0;
 
 	return (
-		<div className="space-y-2">
-			<Label htmlFor={field.name}>{label}</Label>
+		<div className="space-y-1.5">
+			<Label htmlFor={field.name} className="text-xs font-medium">
+				{label}
+			</Label>
 			<Textarea
 				id={field.name}
 				value={field.state.value}
@@ -94,9 +96,7 @@ export function TextArea({
 				aria-invalid={hasError}
 			/>
 			{hasError && (
-				<p className="text-sm font-medium text-destructive">
-					{formatError(errors[0])}
-				</p>
+				<p className="text-xs text-destructive">{formatError(errors[0])}</p>
 			)}
 		</div>
 	);
@@ -115,8 +115,10 @@ export function Select({
 	const hasError = field.state.meta.isTouched && errors.length > 0;
 
 	return (
-		<div className="space-y-2">
-			<Label htmlFor={field.name}>{label}</Label>
+		<div className="space-y-1.5">
+			<Label htmlFor={field.name} className="text-xs font-medium">
+				{label}
+			</Label>
 			<select
 				id={field.name}
 				name={field.name}
@@ -124,7 +126,7 @@ export function Select({
 				onBlur={field.handleBlur}
 				onChange={(e) => field.handleChange(e.target.value)}
 				aria-invalid={hasError}
-				className="flex h-7 w-full rounded-md border border-input bg-input/20 px-2 py-0.5 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 dark:bg-input/30"
+				className="flex h-9 w-full rounded-md border border-input bg-input/20 px-3 py-1 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 dark:bg-input/30"
 			>
 				{values.map((value) => (
 					<option key={value.value} value={value.value}>
@@ -133,9 +135,7 @@ export function Select({
 				))}
 			</select>
 			{hasError && (
-				<p className="text-sm font-medium text-destructive">
-					{formatError(errors[0])}
-				</p>
+				<p className="text-xs text-destructive">{formatError(errors[0])}</p>
 			)}
 		</div>
 	);

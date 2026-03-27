@@ -34,7 +34,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 				content: "width=device-width, initial-scale=1",
 			},
 			{
-				title: "TanStack Start Starter",
+				title: "Electric Start",
 			},
 		],
 		links: [
@@ -50,8 +50,13 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
-		<html lang="en">
+		<html lang="en" suppressHydrationWarning>
 			<head>
+				<script
+					dangerouslySetInnerHTML={{
+						__html: `(function(){try{var t=localStorage.getItem("theme");var d=t==="dark"||(t!=="light"&&matchMedia("(prefers-color-scheme:dark)").matches);document.documentElement.classList.add(d?"dark":"light");document.documentElement.style.colorScheme=d?"dark":"light";if(t&&t!=="auto")document.documentElement.setAttribute("data-theme",t)}catch(e){}})()`,
+					}}
+				/>
 				<HeadContent />
 			</head>
 			<body className="font-sans antialiased">
@@ -64,11 +69,13 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 
 function RootLayout() {
 	return (
-		<>
+		<div className="flex min-h-screen flex-col">
 			<GlobalNavigationHotkeys />
 			<Header />
-			<Outlet />
+			<div className="flex-1">
+				<Outlet />
+			</div>
 			<Footer />
-		</>
+		</div>
 	);
 }
