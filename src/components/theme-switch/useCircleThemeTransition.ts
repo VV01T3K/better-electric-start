@@ -11,7 +11,7 @@ type ViewTransitionDocument = Document & {
 	) => ViewTransition;
 };
 
-const DURATION = 500;
+const DURATION = 350;
 const EASING = "ease-in-out";
 const PSEUDO_ELEMENT = "::view-transition-new(root)";
 
