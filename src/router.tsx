@@ -10,6 +10,7 @@ export function getRouter() {
 		context: getContext(),
 
 		scrollRestoration: true,
+		defaultViewTransition: true,
 		defaultPreload: "intent",
 		defaultPreloadStaleTime: 0,
 	});

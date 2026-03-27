@@ -9,6 +9,7 @@ import {
 import React from "react";
 
 import { AppSidebar } from "../components/app-sidebar";
+import { ThemeProvider } from "../components/ThemeProvider";
 import ThemeToggle from "../components/ThemeToggle";
 import {
 	Breadcrumb,
@@ -68,17 +69,14 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<head>
-				<script
-					dangerouslySetInnerHTML={{
-						__html: `(function(){try{var t=localStorage.getItem("theme");var d=t==="dark"||(t!=="light"&&matchMedia("(prefers-color-scheme:dark)").matches);document.documentElement.classList.add(d?"dark":"light");document.documentElement.style.colorScheme=d?"dark":"light";if(t&&t!=="auto")document.documentElement.setAttribute("data-theme",t)}catch(e){}})()`,
-					}}
-				/>
 				<HeadContent />
 			</head>
 			<body className="font-sans antialiased">
-				<TanStackQueryProvider>
-					<TooltipProvider>{children}</TooltipProvider>
-				</TanStackQueryProvider>
+				<ThemeProvider>
+					<TanStackQueryProvider>
+						<TooltipProvider>{children}</TooltipProvider>
+					</TanStackQueryProvider>
+				</ThemeProvider>
 				<Scripts />
 			</body>
 		</html>

@@ -1,3 +1,5 @@
+There is no existing users so we don't have to worry about breaking changes, but we should still be mindful of not making things too difficult for ourselves to change later. We can iterate quickly and make changes as needed, but we should also try to keep things organized and maintainable.
+
 ## bun access for agents
 
 Only for running manually by agent and not for user prompts nor scripts, only agents integrated terminal.

@@ -1,85 +1,51 @@
 import { Moon, Sun, Monitor } from "lucide-react";
-import { useEffect, useState } from "react";
+import { type MouseEvent, useEffect, useState } from "react";
 
+import type { AppTheme } from "#/components/theme-switch/themeSettings";
+import { useCircleThemeTransition } from "#/components/theme-switch/useCircleThemeTransition";
+import { useTheme } from "#/components/ThemeProvider";
 import { Button } from "#/components/ui/button";
 
-type ThemeMode = "light" | "dark" | "auto";
-
-function getInitialMode(): ThemeMode {
-	if (typeof window === "undefined") {
-		return "auto";
-	}
-
-	const stored = window.localStorage.getItem("theme");
-	if (stored === "light" || stored === "dark" || stored === "auto") {
-		return stored;
-	}
-
-	return "auto";
-}
-
-function applyThemeMode(mode: ThemeMode) {
-	const prefersDark = window.matchMedia(
-		"(prefers-color-scheme: dark)",
-	).matches;
-	const resolved = mode === "auto" ? (prefersDark ? "dark" : "light") : mode;
-
-	document.documentElement.classList.remove("light", "dark");
-	document.documentElement.classList.add(resolved);
-
-	if (mode === "auto") {
-		document.documentElement.removeAttribute("data-theme");
-	} else {
-		document.documentElement.setAttribute("data-theme", mode);
-	}
-
-	document.documentElement.style.colorScheme = resolved;
+function getNextTheme(theme: AppTheme): AppTheme {
+	return theme === "light" ? "dark" : theme === "dark" ? "system" : "light";
 }
 
 const icons = {
 	light: Sun,
 	dark: Moon,
-	auto: Monitor,
+	system: Monitor,
 } as const;
 
 export default function ThemeToggle() {
-	const [mode, setMode] = useState<ThemeMode>("auto");
+	const [mounted, setMounted] = useState(false);
+	const animateThemeChange = useCircleThemeTransition();
+	const { resolvedTheme, theme, setTheme } = useTheme();
 
 	useEffect(() => {
-		const initialMode = getInitialMode();
-		setMode(initialMode);
-		applyThemeMode(initialMode);
+		setMounted(true);
 	}, []);
 
-	useEffect(() => {
-		if (mode !== "auto") {
+	const selectedTheme = mounted && theme ? theme : "system";
+	const resolvedThemeLabel = mounted ? (resolvedTheme ?? "light") : "light";
+
+	function toggleMode(event: MouseEvent<HTMLButtonElement>) {
+		if (!mounted) {
 			return;
 		}
 
-		const media = window.matchMedia("(prefers-color-scheme: dark)");
-		const onChange = () => applyThemeMode("auto");
+		const nextTheme = getNextTheme(selectedTheme);
 
-		media.addEventListener("change", onChange);
-		return () => {
-			media.removeEventListener("change", onChange);
-		};
-	}, [mode]);
-
-	function toggleMode() {
-		const nextMode: ThemeMode =
-			mode === "light" ? "dark" : mode === "dark" ? "auto" : "light";
-		setMode(nextMode);
-		applyThemeMode(nextMode);
-		window.localStorage.setItem("theme", nextMode);
+		void animateThemeChange(event.currentTarget, () => {
+			setTheme(nextTheme);
+		});
 	}
 
-	const Icon = icons[mode];
+	const Icon = icons[selectedTheme];
+	const nextThemeLabel = getNextTheme(selectedTheme);
 	const label =
-		mode === "auto"
-			? "Theme: system. Click for light."
-			: mode === "light"
-				? "Theme: light. Click for dark."
-				: "Theme: dark. Click for system.";
+		selectedTheme === "system"
+			? `Theme: system (${resolvedThemeLabel}). Click for ${nextThemeLabel}.`
+			: `Theme: ${selectedTheme}. Click for ${nextThemeLabel}.`;
 
 	return (
 		<Button

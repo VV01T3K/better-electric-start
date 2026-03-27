@@ -48,6 +48,7 @@
 		"drizzle-kit": "^1.0.0-beta.19",
 		"drizzle-orm": "^1.0.0-beta.19",
 		"lucide-react": "^1.7.0",
+		"next-themes": "^0.4.6",
 		"nitro": "npm:nitro-nightly@3.0.1-20260325-215745-feaa1253",
 		"pg": "^8.20.0",
 		"react": "^19.2.4",
