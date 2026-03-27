@@ -1,6 +1,7 @@
 import type { QueryClient } from "@tanstack/react-query";
 import {
 	HeadContent,
+	Link,
 	Outlet,
 	Scripts,
 	createRootRouteWithContext,
@@ -14,6 +15,7 @@ import ThemeToggle from "../components/ThemeToggle";
 import {
 	Breadcrumb,
 	BreadcrumbItem,
+	BreadcrumbLink,
 	BreadcrumbList,
 	BreadcrumbPage,
 	BreadcrumbSeparator,
@@ -28,6 +30,7 @@ import { TooltipProvider } from "../components/ui/tooltip";
 import { getSession } from "../integrations/better-auth/functions";
 import GlobalNavigationHotkeys from "../integrations/tanstack/hotkeys/GlobalNavigationHotkeys";
 import TanStackQueryProvider from "../integrations/tanstack/query/root-provider";
+import { getBreadcrumbItems } from "../lib/navigation";
 
 import appCss from "../styles.css?url";
 
@@ -83,28 +86,16 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 	);
 }
 
-const breadcrumbLabels: Record<string, string> = {
-	demo: "Demos",
-	db: "Database",
-	todos: "Todos",
-	"simple-list": "Simple List",
-	form: "Forms",
-	address: "Address",
-	auth: "Auth",
-	"sign-in": "Sign In",
-	"sign-up": "Sign Up",
-};
-
 function DynamicBreadcrumbs() {
 	const { pathname } = useLocation();
-	const segments = pathname.split("/").filter(Boolean);
+	const items = getBreadcrumbItems(pathname);
 
-	if (segments.length === 0) {
+	if (items.length === 1) {
 		return (
 			<Breadcrumb>
 				<BreadcrumbList>
 					<BreadcrumbItem>
-						<BreadcrumbPage>Home</BreadcrumbPage>
+						<BreadcrumbPage>{items[0]?.label}</BreadcrumbPage>
 					</BreadcrumbItem>
 				</BreadcrumbList>
 			</Breadcrumb>
@@ -114,21 +105,24 @@ function DynamicBreadcrumbs() {
 	return (
 		<Breadcrumb>
 			<BreadcrumbList>
-				{segments.map((segment, index) => {
-					const isLast = index === segments.length - 1;
-					const label =
-						breadcrumbLabels[segment] ||
-						segment.charAt(0).toUpperCase() + segment.slice(1);
+				{items.map((item, index) => {
+					const isLast = index === items.length - 1;
 
 					return (
-						<React.Fragment key={`${segment}-${index}`}>
+						<React.Fragment key={`${item.label}-${index}`}>
 							{index > 0 && (
 								<BreadcrumbSeparator className="hidden md:block" />
 							)}
 							<BreadcrumbItem
 								className={!isLast ? "hidden md:block" : ""}
 							>
-								<BreadcrumbPage>{label}</BreadcrumbPage>
+								{item.to && !isLast ? (
+									<BreadcrumbLink render={<Link to={item.to} />}>
+										{item.label}
+									</BreadcrumbLink>
+								) : (
+									<BreadcrumbPage>{item.label}</BreadcrumbPage>
+								)}
 							</BreadcrumbItem>
 						</React.Fragment>
 					);

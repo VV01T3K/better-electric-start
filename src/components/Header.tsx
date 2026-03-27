@@ -1,49 +1,22 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { Home, ListTodo, ClipboardList, Zap } from "lucide-react";
+import { Zap } from "lucide-react";
 import { useState } from "react";
 
 import { Button, buttonVariants } from "#/components/ui/button";
 import { Separator } from "#/components/ui/separator";
 import { authClient } from "#/integrations/better-auth/client";
 import { useSession } from "#/integrations/better-auth/useSession";
-import type { NavLinkArray } from "#/integrations/tanstack/hotkeys/nav-links.ts";
+import { getVisibleNavLinks } from "#/lib/navigation";
 import { cn } from "#/lib/utils";
 
 import ThemeToggle from "./ThemeToggle";
-
-export const navLinks: NavLinkArray = [
-	{
-		to: "/",
-		label: "Home",
-		icon: Home,
-		hotkey: "1",
-		public: true,
-	},
-	{
-		to: "/demo/db/todos",
-		label: "Todos",
-		icon: ListTodo,
-		hotkey: "2",
-	},
-	{
-		to: "/demo/db/simple-list",
-		label: "Simple List",
-		icon: ClipboardList,
-		hotkey: "3",
-	},
-	{
-		to: "/demo/form/address",
-		label: "Form",
-		icon: Zap,
-		hotkey: "4",
-	},
-] as const;
 
 export default function Header() {
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
 	const { isAuthenticated, isPending, user } = useSession();
 	const [isSigningOut, setIsSigningOut] = useState(false);
+	const visibleNavLinks = getVisibleNavLinks(isAuthenticated);
 
 	async function handleSignOut() {
 		setIsSigningOut(true);
@@ -75,31 +48,29 @@ export default function Header() {
 				<Separator orientation="vertical" className="mx-2! h-4!" />
 
 				<div className="flex items-center gap-0.5">
-					{navLinks
-						.filter((link) => isAuthenticated || link.public)
-						.map((link) => {
-							const isActive = pathname === link.to;
+					{visibleNavLinks.map((link) => {
+						const isActive = pathname === link.to;
 
-							return (
-								<Link
-									key={link.to}
-									to={link.to}
-									title={`${link.label} (Alt+${link.hotkey})`}
-									className={cn(
-										"relative inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium no-underline transition-all",
-										isActive
-											? "bg-accent text-foreground"
-											: "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
-									)}
-								>
-									<link.icon className="size-3.5" />
-									<span>{link.label}</span>
-									{isActive && (
-										<span className="absolute -bottom-3.25 left-1/2 h-px w-6 -translate-x-1/2 bg-primary" />
-									)}
-								</Link>
-							);
-						})}
+						return (
+							<Link
+								key={link.to}
+								to={link.to}
+								title={`${link.label} (${link.hotkey})`}
+								className={cn(
+									"relative inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium no-underline transition-all",
+									isActive
+										? "bg-accent text-foreground"
+										: "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
+								)}
+							>
+								<link.icon className="size-3.5" />
+								<span>{link.label}</span>
+								{isActive && (
+									<span className="absolute -bottom-3.25 left-1/2 h-px w-6 -translate-x-1/2 bg-primary" />
+								)}
+							</Link>
+						);
+					})}
 				</div>
 
 				<div className="ml-auto flex items-center gap-2">
