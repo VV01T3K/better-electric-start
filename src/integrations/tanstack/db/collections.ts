@@ -1,7 +1,9 @@
+import { fileServerSchema } from "#/db/schemas/files";
 import { simpleListItemServerSchema } from "#/db/schemas/simple-list-items";
 import { todoServerSchema } from "#/db/schemas/todos";
+import { deleteFile } from "#/features/files/api.server";
 import { insertSimpleListItem } from "#/funcs/simple-list-items";
-import { insertTodo, deleteTodo, updateTodo } from "#/funcs/todos";
+import { deleteTodo, insertTodo, updateTodo } from "#/funcs/todos";
 import { createElectricCollection } from "#/integrations/electric/collection";
 
 export const todoCollection = createElectricCollection({
@@ -18,4 +20,11 @@ export const simpleListCollection = createElectricCollection({
 	scope: "public",
 	schema: simpleListItemServerSchema.row,
 	onInsert: insertSimpleListItem,
+});
+
+export const filesCollection = createElectricCollection({
+	id: "files",
+	scope: "authenticated",
+	schema: fileServerSchema.row,
+	onDelete: deleteFile,
 });

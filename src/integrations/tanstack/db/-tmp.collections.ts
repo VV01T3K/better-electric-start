@@ -1,7 +1,9 @@
 // * Temporary home for collections until TanStack DB supports SSR cleanly. * //
 
+import { fileServerSchema } from "#/db/schemas/files";
 import { simpleListItemServerSchema } from "#/db/schemas/simple-list-items";
 import { todoServerSchema } from "#/db/schemas/todos";
+import { deleteFile } from "#/features/files/api.server";
 import { insertSimpleListItem } from "#/funcs/simple-list-items";
 import { deleteTodo, insertTodo, updateTodo } from "#/funcs/todos";
 import { createElectricCollection } from "#/integrations/electric/collection";
@@ -29,6 +31,16 @@ export const demoTodoCollection = createElectricCollection({
 
 export const demoTodoCollectionPreloadPromise =
 	typeof window === "undefined" ? null : demoTodoCollection.preload();
+
+export const demoFilesCollection = createElectricCollection({
+	id: "files-demo-route",
+	schema: fileServerSchema.row,
+	onDelete: deleteFile,
+	url: getDemoCollectionUrl("files"),
+});
+
+export const demoFilesCollectionPreloadPromise =
+	typeof window === "undefined" ? null : demoFilesCollection.preload();
 
 export const demoSimpleListCollection = createElectricCollection({
 	id: "simple-list-demo-route",

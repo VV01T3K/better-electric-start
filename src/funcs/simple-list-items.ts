@@ -4,14 +4,13 @@ import { count } from "drizzle-orm";
 import { db } from "#/db";
 import { simpleListItemServerSchema } from "#/db/schemas/simple-list-items";
 import { simpleListItems } from "#/db/tables/simple-list-items";
-import { requireCurrentSession } from "#/integrations/better-auth/session.server";
+import { requireSessionMiddleware } from "#/integrations/better-auth/middleware";
 import { readTxId } from "#/integrations/electric/read-tx-id";
 
 export const insertSimpleListItem = createServerFn({ method: "POST" })
+	.middleware([requireSessionMiddleware])
 	.inputValidator(simpleListItemServerSchema.insert)
 	.handler(async ({ data }) => {
-		await requireCurrentSession();
-
 		return db.transaction(async (tx) => {
 			await tx.insert(simpleListItems).values({
 				id: data.id,
@@ -23,10 +22,9 @@ export const insertSimpleListItem = createServerFn({ method: "POST" })
 		});
 	});
 
-export const getSimpleListItemCount = createServerFn({ method: "GET" }).handler(
-	async () => {
-		await requireCurrentSession();
-
+export const getSimpleListItemCount = createServerFn({ method: "GET" })
+	.middleware([requireSessionMiddleware])
+	.handler(async () => {
 		const [result] = await db
 			.select({
 				count: count(),
@@ -34,5 +32,4 @@ export const getSimpleListItemCount = createServerFn({ method: "GET" }).handler(
 			.from(simpleListItems);
 
 		return result?.count ?? 0;
-	},
-);
+	});

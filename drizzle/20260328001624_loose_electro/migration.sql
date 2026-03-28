@@ -1,0 +1,1 @@
+ALTER TABLE "files" RENAME COLUMN "uploaded_by_user_id" TO "user_id";

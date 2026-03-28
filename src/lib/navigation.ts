@@ -1,5 +1,6 @@
 import {
 	ClipboardList,
+	Files,
 	FileInputIcon,
 	Home,
 	type LucideIcon,
@@ -42,10 +43,16 @@ export const navLinks = [
 		hotkey: "3",
 	},
 	{
+		to: "/demo/db/files",
+		label: "Files",
+		icon: Files,
+		hotkey: "4",
+	},
+	{
 		to: "/demo/form/address",
 		label: "Address Form",
 		icon: FileInputIcon,
-		hotkey: "4",
+		hotkey: "5",
 	},
 ] as const satisfies ReadonlyArray<NavigationLink>;
 

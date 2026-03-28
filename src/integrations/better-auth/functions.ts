@@ -1,9 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 
-import {
-	getCurrentSession,
-	requireCurrentSession,
-} from "#/integrations/better-auth/session.server";
+import { requireSessionMiddleware } from "#/integrations/better-auth/middleware";
+import { getCurrentSession } from "#/integrations/better-auth/session.server";
 
 export const getSession = createServerFn({ method: "GET" }).handler(
 	async () => {
@@ -11,8 +9,8 @@ export const getSession = createServerFn({ method: "GET" }).handler(
 	},
 );
 
-export const requireSession = createServerFn({ method: "GET" }).handler(
-	async () => {
-		return requireCurrentSession();
-	},
-);
+export const requireSession = createServerFn({ method: "GET" })
+	.middleware([requireSessionMiddleware])
+	.handler(async ({ context }) => {
+		return context.session;
+	});
