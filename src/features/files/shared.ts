@@ -1,4 +1,6 @@
 export const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024;
+export const FILE_UPLOAD_PATH = "/api/files/" as const;
+export const FILE_ROUTE_PATTERN = "/api/files/$id" as const;
 
 export const ALLOWED_UPLOAD_CONTENT_TYPES = [
 	"application/pdf",
@@ -18,6 +20,10 @@ export const UPLOAD_ACCEPT_ATTRIBUTE = ALLOWED_UPLOAD_CONTENT_TYPES.join(",");
 export const allowedUploadContentTypes = new Set<string>(
 	ALLOWED_UPLOAD_CONTENT_TYPES,
 );
+
+export function getFilePath(id: string) {
+	return `/api/files/${id}`;
+}
 
 export function formatFileSize(sizeBytes: number) {
 	if (!Number.isFinite(sizeBytes) || sizeBytes < 0) {

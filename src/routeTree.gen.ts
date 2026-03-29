@@ -13,9 +13,9 @@ import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthSignUpRouteImport } from './routes/auth/sign-up'
 import { Route as AuthSignInRouteImport } from './routes/auth/sign-in'
-import { Route as ApiFilesRouteImport } from './routes/api/files'
+import { Route as ApiFilesIndexRouteImport } from './routes/api/files/index'
 import { Route as DemoFormAddressRouteImport } from './routes/demo/form.address'
-import { Route as ApiFilesFileIdRouteImport } from './routes/api/files.$fileId'
+import { Route as ApiFilesIdRouteImport } from './routes/api/files/$id'
 import { Route as ApiElectricShapeRouteImport } from './routes/api/electric.$shape'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as AuthedDemoDbTodosRouteImport } from './routes/_authed/demo/db.todos'
@@ -41,9 +41,9 @@ const AuthSignInRoute = AuthSignInRouteImport.update({
   path: '/auth/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiFilesRoute = ApiFilesRouteImport.update({
-  id: '/api/files',
-  path: '/api/files',
+const ApiFilesIndexRoute = ApiFilesIndexRouteImport.update({
+  id: '/api/files/',
+  path: '/api/files/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoFormAddressRoute = DemoFormAddressRouteImport.update({
@@ -51,10 +51,10 @@ const DemoFormAddressRoute = DemoFormAddressRouteImport.update({
   path: '/demo/form/address',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiFilesFileIdRoute = ApiFilesFileIdRouteImport.update({
-  id: '/$fileId',
-  path: '/$fileId',
-  getParentRoute: () => ApiFilesRoute,
+const ApiFilesIdRoute = ApiFilesIdRouteImport.update({
+  id: '/api/files/$id',
+  path: '/api/files/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiElectricShapeRoute = ApiElectricShapeRouteImport.update({
   id: '/api/electric/$shape',
@@ -84,26 +84,26 @@ const AuthedDemoDbFilesRoute = AuthedDemoDbFilesRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/api/files': typeof ApiFilesRouteWithChildren
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/electric/$shape': typeof ApiElectricShapeRoute
-  '/api/files/$fileId': typeof ApiFilesFileIdRoute
+  '/api/files/$id': typeof ApiFilesIdRoute
   '/demo/form/address': typeof DemoFormAddressRoute
+  '/api/files/': typeof ApiFilesIndexRoute
   '/demo/db/files': typeof AuthedDemoDbFilesRoute
   '/demo/db/simple-list': typeof AuthedDemoDbSimpleListRoute
   '/demo/db/todos': typeof AuthedDemoDbTodosRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/api/files': typeof ApiFilesRouteWithChildren
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/electric/$shape': typeof ApiElectricShapeRoute
-  '/api/files/$fileId': typeof ApiFilesFileIdRoute
+  '/api/files/$id': typeof ApiFilesIdRoute
   '/demo/form/address': typeof DemoFormAddressRoute
+  '/api/files': typeof ApiFilesIndexRoute
   '/demo/db/files': typeof AuthedDemoDbFilesRoute
   '/demo/db/simple-list': typeof AuthedDemoDbSimpleListRoute
   '/demo/db/todos': typeof AuthedDemoDbTodosRoute
@@ -112,13 +112,13 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authed': typeof AuthedRouteWithChildren
-  '/api/files': typeof ApiFilesRouteWithChildren
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/electric/$shape': typeof ApiElectricShapeRoute
-  '/api/files/$fileId': typeof ApiFilesFileIdRoute
+  '/api/files/$id': typeof ApiFilesIdRoute
   '/demo/form/address': typeof DemoFormAddressRoute
+  '/api/files/': typeof ApiFilesIndexRoute
   '/_authed/demo/db/files': typeof AuthedDemoDbFilesRoute
   '/_authed/demo/db/simple-list': typeof AuthedDemoDbSimpleListRoute
   '/_authed/demo/db/todos': typeof AuthedDemoDbTodosRoute
@@ -127,26 +127,26 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/api/files'
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/api/auth/$'
     | '/api/electric/$shape'
-    | '/api/files/$fileId'
+    | '/api/files/$id'
     | '/demo/form/address'
+    | '/api/files/'
     | '/demo/db/files'
     | '/demo/db/simple-list'
     | '/demo/db/todos'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/api/files'
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/api/auth/$'
     | '/api/electric/$shape'
-    | '/api/files/$fileId'
+    | '/api/files/$id'
     | '/demo/form/address'
+    | '/api/files'
     | '/demo/db/files'
     | '/demo/db/simple-list'
     | '/demo/db/todos'
@@ -154,13 +154,13 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authed'
-    | '/api/files'
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/api/auth/$'
     | '/api/electric/$shape'
-    | '/api/files/$fileId'
+    | '/api/files/$id'
     | '/demo/form/address'
+    | '/api/files/'
     | '/_authed/demo/db/files'
     | '/_authed/demo/db/simple-list'
     | '/_authed/demo/db/todos'
@@ -169,12 +169,13 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthedRoute: typeof AuthedRouteWithChildren
-  ApiFilesRoute: typeof ApiFilesRouteWithChildren
   AuthSignInRoute: typeof AuthSignInRoute
   AuthSignUpRoute: typeof AuthSignUpRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiElectricShapeRoute: typeof ApiElectricShapeRoute
+  ApiFilesIdRoute: typeof ApiFilesIdRoute
   DemoFormAddressRoute: typeof DemoFormAddressRoute
+  ApiFilesIndexRoute: typeof ApiFilesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -207,11 +208,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSignInRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/files': {
-      id: '/api/files'
+    '/api/files/': {
+      id: '/api/files/'
       path: '/api/files'
-      fullPath: '/api/files'
-      preLoaderRoute: typeof ApiFilesRouteImport
+      fullPath: '/api/files/'
+      preLoaderRoute: typeof ApiFilesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo/form/address': {
@@ -221,12 +222,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoFormAddressRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/files/$fileId': {
-      id: '/api/files/$fileId'
-      path: '/$fileId'
-      fullPath: '/api/files/$fileId'
-      preLoaderRoute: typeof ApiFilesFileIdRouteImport
-      parentRoute: typeof ApiFilesRoute
+    '/api/files/$id': {
+      id: '/api/files/$id'
+      path: '/api/files/$id'
+      fullPath: '/api/files/$id'
+      preLoaderRoute: typeof ApiFilesIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/electric/$shape': {
       id: '/api/electric/$shape'
@@ -281,27 +282,16 @@ const AuthedRouteChildren: AuthedRouteChildren = {
 const AuthedRouteWithChildren =
   AuthedRoute._addFileChildren(AuthedRouteChildren)
 
-interface ApiFilesRouteChildren {
-  ApiFilesFileIdRoute: typeof ApiFilesFileIdRoute
-}
-
-const ApiFilesRouteChildren: ApiFilesRouteChildren = {
-  ApiFilesFileIdRoute: ApiFilesFileIdRoute,
-}
-
-const ApiFilesRouteWithChildren = ApiFilesRoute._addFileChildren(
-  ApiFilesRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthedRoute: AuthedRouteWithChildren,
-  ApiFilesRoute: ApiFilesRouteWithChildren,
   AuthSignInRoute: AuthSignInRoute,
   AuthSignUpRoute: AuthSignUpRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiElectricShapeRoute: ApiElectricShapeRoute,
+  ApiFilesIdRoute: ApiFilesIdRoute,
   DemoFormAddressRoute: DemoFormAddressRoute,
+  ApiFilesIndexRoute: ApiFilesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

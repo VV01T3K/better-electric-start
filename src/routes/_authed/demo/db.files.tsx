@@ -25,13 +25,15 @@ import { Button } from "#/components/ui/button";
 import { Progress, ProgressLabel } from "#/components/ui/progress";
 import { Skeleton } from "#/components/ui/skeleton";
 import {
+	FILE_UPLOAD_PATH,
 	MAX_FILE_SIZE_BYTES,
 	UPLOAD_ACCEPT_ATTRIBUTE,
 	allowedUploadContentTypes,
 	formatFileSize,
+	getFilePath,
 	isImageContentType,
 } from "#/features/files/shared";
-import { getFileCount } from "#/features/files/api.server";
+import { getFileCount } from "#/funcs/files";
 import { demoFilesCollection } from "#/integrations/tanstack/db/-tmp.collections";
 import { cn } from "#/lib/utils";
 
@@ -357,7 +359,7 @@ function FilesClientPage({ skeletonCount }: { skeletonCount: number }) {
 				resolve();
 			});
 
-			xhr.open("POST", "/api/files");
+			xhr.open("POST", FILE_UPLOAD_PATH);
 			xhr.send(formData);
 		});
 	}
@@ -683,7 +685,7 @@ type SyncedFile = {
 };
 
 function FileRow({ file }: { file: SyncedFile }) {
-	const fileHref = `/api/files/${file.id}`;
+	const fileHref = getFilePath(file.id);
 	const isImage = isImageContentType(file.content_type);
 	const TypeIcon = getFileTypeIcon(file.content_type);
 

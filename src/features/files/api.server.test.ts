@@ -2,6 +2,8 @@
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { FILE_UPLOAD_PATH, getFilePath } from "./shared";
+
 const mocks = {
 	db: {
 		insert: vi.fn(),
@@ -67,12 +69,9 @@ const resolveStoragePathSpy = vi.spyOn(storageServer, "resolveStoragePath");
 const actualBunFile = Bun.file.bind(Bun);
 const bunFileSpy = vi.spyOn(Bun, "file");
 
-const {
-	deleteFile,
-	getFileCount,
-	handleFileServeRequest,
-	handleFileUploadRequest,
-} = await import("./api.server");
+const { handleFileServeRequest, handleFileUploadRequest } =
+	await import("./api.server");
+const { deleteFile, getFileCount } = await import("#/funcs/files");
 const { FileStorageError } = storageServer;
 
 function mockInsertReturning(result: unknown) {
@@ -134,7 +133,7 @@ describe("file API handlers", () => {
 		);
 
 		const response = await handleFileUploadRequest(
-			new Request("http://localhost/api/files", {
+			new Request(`http://localhost${FILE_UPLOAD_PATH}`, {
 				method: "POST",
 				body: formData,
 			}),
@@ -177,7 +176,7 @@ describe("file API handlers", () => {
 		]);
 
 		const response = await handleFileUploadRequest(
-			new Request("http://localhost/api/files", {
+			new Request(`http://localhost${FILE_UPLOAD_PATH}`, {
 				method: "POST",
 				body: formData,
 			}),
@@ -213,19 +212,16 @@ describe("file API handlers", () => {
 		mockInsertReturning([]);
 
 		const response = await handleFileUploadRequest(
-			new Request("http://localhost/api/files", {
+			new Request(`http://localhost${FILE_UPLOAD_PATH}`, {
 				method: "POST",
 				body: formData,
 			}),
 		);
 
 		expect(response.status).toBe(500);
-		expect(deleteStoredFileSpy).toHaveBeenCalledWith(
-			"2026-03-27/file.txt",
-			{
-				ignoreMissing: true,
-			},
-		);
+		expect(deleteStoredFileSpy).toHaveBeenCalledWith("2026-03-27/file.txt", {
+			ignoreMissing: true,
+		});
 		await expect(response.json()).resolves.toEqual({
 			error: "Unable to save file metadata.",
 		});
@@ -237,7 +233,7 @@ describe("file API handlers", () => {
 		);
 
 		const response = await handleFileServeRequest(
-			new Request("http://localhost/api/files/test"),
+			new Request(`http://localhost${getFilePath("test")}`),
 			"6a8f8eb8-4c33-47fb-a1d8-a1b2d57ab41c",
 		);
 
@@ -269,7 +265,7 @@ describe("file API handlers", () => {
 		bunFileSpy.mockReturnValue(storedFile as unknown as Bun.BunFile);
 
 		const response = await handleFileServeRequest(
-			new Request("http://localhost/api/files/test"),
+			new Request(`http://localhost${getFilePath("test")}`),
 			"6a8f8eb8-4c33-47fb-a1d8-a1b2d57ab41c",
 		);
 
@@ -302,7 +298,7 @@ describe("file API handlers", () => {
 		bunFileSpy.mockReturnValue(storedFile as unknown as Bun.BunFile);
 
 		const response = await handleFileServeRequest(
-			new Request("http://localhost/api/files/test?download=1"),
+			new Request(`http://localhost${getFilePath("test")}?download=1`),
 			"6a8f8eb8-4c33-47fb-a1d8-a1b2d57ab41c",
 		);
 
@@ -335,7 +331,7 @@ describe("file API handlers", () => {
 		bunFileSpy.mockReturnValue(storedFile as unknown as Bun.BunFile);
 
 		const response = await handleFileServeRequest(
-			new Request("http://localhost/api/files/test", {
+			new Request(`http://localhost${getFilePath("test")}`, {
 				headers: {
 					Range: "bytes=0-4",
 				},
@@ -372,7 +368,7 @@ describe("file API handlers", () => {
 		bunFileSpy.mockReturnValue(storedFile as unknown as Bun.BunFile);
 
 		const response = await handleFileServeRequest(
-			new Request("http://localhost/api/files/test", {
+			new Request(`http://localhost${getFilePath("test")}`, {
 				headers: {
 					Range: "bytes=50-60",
 				},
@@ -408,7 +404,7 @@ describe("file API handlers", () => {
 		bunFileSpy.mockReturnValue(storedFile as unknown as Bun.BunFile);
 
 		const response = await handleFileServeRequest(
-			new Request("http://localhost/api/files/test", {
+			new Request(`http://localhost${getFilePath("test")}`, {
 				method: "HEAD",
 			}),
 			"6a8f8eb8-4c33-47fb-a1d8-a1b2d57ab41c",
@@ -449,12 +445,9 @@ describe("file server functions", () => {
 			method: "POST",
 		});
 
-		expect(deleteStoredFileSpy).toHaveBeenCalledWith(
-			"2026-03-27/hello.txt",
-			{
-				ignoreMissing: true,
-			},
-		);
+		expect(deleteStoredFileSpy).toHaveBeenCalledWith("2026-03-27/hello.txt", {
+			ignoreMissing: true,
+		});
 		expect(result).toEqual({ txid: 42 });
 	});
 

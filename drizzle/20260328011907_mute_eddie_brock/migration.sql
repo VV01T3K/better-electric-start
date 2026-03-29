@@ -1,0 +1,2 @@
+CREATE TYPE "file_content_type" AS ENUM('application/pdf', 'application/x-zip-compressed', 'application/zip', 'image/avif', 'image/gif', 'image/jpeg', 'image/png', 'image/svg+xml', 'image/webp', 'text/plain');--> statement-breakpoint
+ALTER TABLE "files" ALTER COLUMN "content_type" SET DATA TYPE "file_content_type" USING "content_type"::"file_content_type";

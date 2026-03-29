@@ -1,8 +1,18 @@
 import "@tanstack/react-start/server-only";
 import { defineRelationsPart } from "drizzle-orm";
-import { integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import {
+	integer,
+	pgEnum,
+	pgTable,
+	text,
+	timestamp,
+	uuid,
+} from "drizzle-orm/pg-core";
 
-import { fileServerSchema } from "#/db/schemas/files";
+import {
+	ALLOWED_UPLOAD_CONTENT_TYPES,
+	fileServerSchema,
+} from "#/db/schemas/files";
 import { assertTableSchema } from "#/db/typecheck";
 
 import { users } from "./auth.gen";
@@ -11,7 +21,10 @@ export const files = pgTable("files", {
 	id: uuid().primaryKey(),
 	storage_key: text().notNull().unique(),
 	original_name: text().notNull(),
-	content_type: text().notNull(),
+	content_type: pgEnum(
+		"file_content_type",
+		ALLOWED_UPLOAD_CONTENT_TYPES,
+	)().notNull(),
 	size_bytes: integer().notNull(),
 	user_id: uuid()
 		.notNull()
